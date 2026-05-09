@@ -1,0 +1,33 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ accion }} Tipo · FlexFit{% endblock %}
+{% block topbar_title %}{{ accion }} Tipo de Ejercicio{% endblock %}
+{% if request.session.rol == 'Admin' %}{% block nav_tipos %}active{% endblock %}{% else %}{% block nav_coach_tipos %}active{% endblock %}{% endif %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>{{ accion }} Tipo de Ejercicio</h2></div>
+  {% if request.session.rol == 'Admin' %}
+    <a href="{% url 'admin_tipos_ejercicio' %}" class="btn btn-outline">← Volver</a>
+  {% else %}
+    <a href="{% url 'coach_tipos_ejercicio' %}" class="btn btn-outline">← Volver</a>
+  {% endif %}
+</div>
+
+<div class="card" style="max-width:480px">
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Nombre del Tipo *</label>
+      <input type="text" name="nombre" class="form-control" value="{{ obj.nombre|default:'' }}" required placeholder="Ej: Cardio, Fuerza, Flexibilidad...">
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">Guardar</button>
+      {% if request.session.rol == 'Admin' %}
+        <a href="{% url 'admin_tipos_ejercicio' %}" class="btn btn-outline">Cancelar</a>
+      {% else %}
+        <a href="{% url 'coach_tipos_ejercicio' %}" class="btn btn-outline">Cancelar</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,267 @@
+{% extends 'core/base.html' %}
+{% block title %}Reportes · FlexFit{% endblock %}
+{% block topbar_title %}Reportes y Estadísticas{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>📊 Reportes y Estadísticas</h2>
+    <p>Análisis completo de la plataforma con filtros multicriterio</p>
+  </div>
+</div>
+
+    <a href="{% url 'exportar_reportes' %}" class="btn btn-primary">
+  📥 Descargar Excel
+</a>
+   
+<!-- ── Tarjetas generales ─────────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem">
+  {% for label, val, color in stats_cards %}
+  {% endfor %}
+  <div class="stat-card" style="background:var(--card-bg);border-radius:12px;padding:1.25rem;border-left:4px solid #6366f1">
+    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 .25rem">Usuarios</p>
+    <p style="font-size:2rem;font-weight:700;margin:0;color:#6366f1">{{ total_usuarios }}</p>
+  </div>
+  <div class="stat-card" style="background:var(--card-bg);border-radius:12px;padding:1.25rem;border-left:4px solid #0ea5e9">
+    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 .25rem">Coaches</p>
+    <p style="font-size:2rem;font-weight:700;margin:0;color:#0ea5e9">{{ total_coaches }}</p>
+  </div>
+  <div class="stat-card" style="background:var(--card-bg);border-radius:12px;padding:1.25rem;border-left:4px solid #10b981">
+    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 .25rem">Ejercicios</p>
+    <p style="font-size:2rem;font-weight:700;margin:0;color:#10b981">{{ total_ejercicios_filtrados|default:total_ejercicios }}</p>
+  </div>
+  <div class="stat-card" style="background:var(--card-bg);border-radius:12px;padding:1.25rem;border-left:4px solid #f59e0b">
+    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 .25rem">Rutinas</p>
+    <p style="font-size:2rem;font-weight:700;margin:0;color:#f59e0b">{{ total_rutinas_filtradas|default:total_rutinas }}</p>
+  </div>
+  <div class="stat-card" style="background:var(--card-bg);border-radius:12px;padding:1.25rem;border-left:4px solid #ef4444">
+    <p style="font-size:.8rem;color:var(--text-secondary);margin:0 0 .25rem">Sesiones totales</p>
+    <p style="font-size:2rem;font-weight:700;margin:0;color:#ef4444">{{ total_sesiones_filtradas|default:total_sesiones }}</p>
+  </div>
+</div>
+
+
+<!-- ── Filtros multicriterio ──────────────────────────────────────────────── -->
+<div class="card" style="padding:1.5rem;margin-bottom:2rem">
+  <h3 style="margin-bottom:1rem;font-size:1rem">🔍 Filtros de consulta</h3>
+
+  <form method="GET" style="display:flex;gap:1rem;flex-wrap:wrap;align-items:flex-end">
+
+    <div class="form-group" style="flex:1;min-width:160px">
+      <label class="form-label">Fecha desde</label>
+      <input type="date" name="fecha_desde" value="{{ fecha_desde }}" class="form-control">
+    </div>
+
+    <div class="form-group" style="flex:1;min-width:160px">
+      <label class="form-label">Fecha hasta</label>
+      <input type="date" name="fecha_hasta" value="{{ fecha_hasta }}" class="form-control">
+    </div>
+
+    <div class="form-group" style="flex:1;min-width:140px">
+      <label class="form-label">Nivel de rutina</label>
+      <select name="nivel" class="form-control">
+        <option value="">Todos</option>
+        {% for n in niveles %}
+          <option value="{{ n.nombre }}" {% if nivel_filtro == n.nombre %}selected{% endif %}>
+            {{ n.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-group" style="flex:1;min-width:140px">
+      <label class="form-label">Tipo de ejercicio</label>
+      <select name="tipo" class="form-control">
+        <option value="">Todos</option>
+        {% for t in tipos %}
+          <option value="{{ t.nombre }}" {% if tipo_filtro == t.nombre %}selected{% endif %}>
+            {{ t.nombre }}
+          </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div style="display:flex;gap:.5rem">
+      <button type="submit" class="btn btn-primary">Filtrar</button>
+      <a href="{% url 'reportes' %}" class="btn btn-outline">Limpiar</a>
+    </div>
+
+  </form>
+</div>
+
+<!-- ── Indicador de filtros activos ───────────────────────────────────────── -->
+{% if tipo_filtro or nivel_filtro or fecha_desde or fecha_hasta %}
+<div style="margin-bottom:1rem;font-size:.9rem;">
+  <strong>Filtros activos:</strong>
+
+  {% if tipo_filtro %} <span>Tipo: {{ tipo_filtro }}</span> {% endif %}
+  {% if nivel_filtro %} <span> | Nivel: {{ nivel_filtro }}</span> {% endif %}
+  {% if fecha_desde %} <span> | Desde: {{ fecha_desde }}</span> {% endif %}
+  {% if fecha_hasta %} <span> | Hasta: {{ fecha_hasta }}</span> {% endif %}
+</div>
+{% endif %}
+
+<!-- ── Estadísticas dinámicas ─────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:1rem;margin-bottom:2rem">
+
+  <div class="card">
+    <p>Sesiones</p>
+    <h2>{{ total_sesiones_filtradas|default:total_sesiones }}</h2>
+  </div>
+
+  <div class="card">
+    <p>Promedio repeticiones</p>
+    <h2>{{ promedio_repeticiones|floatformat:1|default:"0" }}</h2>
+  </div>
+
+  <div class="card">
+    <p>Rutinas</p>
+    <h2>{{ total_rutinas_filtradas|default:total_rutinas }}</h2>
+  </div>
+
+  <div class="card">
+    <p>Ejercicios</p>
+    <h2>{{ total_ejercicios_filtrados|default:total_ejercicios }}</h2>
+  </div>
+
+</div>
+
+<!-- ── Gráficas ───────────────────────────────────────────────────────────── -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:1.5rem;margin-bottom:2rem">
+
+  <!-- Usuarios por género -->
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:.95rem;margin-bottom:1rem">👥 Usuarios por género</h3>
+    <canvas id="chartGenero" height="180"></canvas>
+  </div>
+
+  <!-- Ejercicios por dificultad -->
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:.95rem;margin-bottom:1rem">💪 Ejercicios por dificultad</h3>
+    <canvas id="chartDificultad" height="180"></canvas>
+  </div>
+
+  <!-- Registros por mes -->
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:.95rem;margin-bottom:1rem">📅 Nuevos usuarios por mes</h3>
+    <canvas id="chartMeses" height="180"></canvas>
+  </div>
+
+  <!-- Top ejercicios -->
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:.95rem;margin-bottom:1rem">🏅 Top 5 ejercicios más practicados</h3>
+    <canvas id="chartTopEj" height="180"></canvas>
+  </div>
+
+</div>
+
+<!-- ── Tabla rutinas más usadas ───────────────────────────────────────────── -->
+<div class="card" style="padding:1.5rem">
+  <h3 style="font-size:.95rem;margin-bottom:1rem">🏋️ Rutinas más asignadas</h3>
+  {% if rutinas_mas_usadas %}
+  <div style="overflow-x:auto">
+    <table class="table">
+      <thead>
+        <tr>
+          <th>#</th>
+          <th>Rutina</th>
+          <th>Nivel</th>
+          <th>Tipo de ejercicio</th>
+          <th>Asignaciones</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for r in rutinas_mas_usadas %}
+        <tr>
+          <td style="color:var(--text-secondary)">{{ forloop.counter }}</td>
+          <td><strong>{{ r.nombre }}</strong></td>
+          <td>{{ r.id_nivel.nombre|default:"—" }}</td>
+          <td>{{ r.tipo_ejercicio.nombre }}</td>
+          <td>
+            <span style="background:#ede9fe;color:#5b21b6;padding:.2rem .6rem;border-radius:12px;font-size:.82rem">
+              {{ r.total_asignaciones }}
+            </span>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  {% else %}
+  <p style="color:var(--text-secondary);text-align:center;padding:1rem">No hay datos con los filtros aplicados.</p>
+  {% endif %}
+</div>
+
+<!-- Chart.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+  const COLORS = ['#6366f1','#10b981','#f59e0b','#ef4444','#0ea5e9','#8b5cf6'];
+
+  // Género
+  new Chart(document.getElementById('chartGenero'), {
+    type: 'doughnut',
+    data: {
+      labels: [{% for g in usuarios_por_genero %}'{{ g.genero }}',{% endfor %}],
+      datasets:[{ data:[{% for g in usuarios_por_genero %}{{ g.total }},{% endfor %}], backgroundColor:COLORS }]
+    },
+    options:{ plugins:{ legend:{ position:'bottom' } } }
+  });
+
+  // Dificultad
+  new Chart(document.getElementById('chartDificultad'), {
+    type: 'bar',
+    data: {
+      labels: [{% for e in ejercicios_por_nivel %}'{{ e.nivel_dificultad }}',{% endfor %}],
+      datasets:[{
+        label:'Ejercicios',
+        data:[{% for e in ejercicios_por_nivel %}{{ e.total }},{% endfor %}],
+        backgroundColor:['#10b981','#f59e0b','#ef4444']
+      }]
+    },
+    options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+  });
+
+  // Registros por mes
+  new Chart(document.getElementById('chartMeses'), {
+    type: 'line',
+    data: {
+      labels: [{% for m in registros_por_mes %}'{% if m.mes %}{{ m.mes|date:"M Y" }}{% else %}—{% endif %}',{% endfor %}],
+      datasets:[{
+        label:'Usuarios nuevos',
+        data:[{% for m in registros_por_mes %}{{ m.total }},{% endfor %}],
+        borderColor:'#6366f1', backgroundColor:'rgba(99,102,241,.1)', fill:true, tension:.3
+      }]
+    },
+    options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+  });
+
+// Top ejercicios
+new Chart(document.getElementById('chartTopEj'), {
+  type: 'bar',
+  indexAxis: 'y',
+  data: {
+    labels: [
+      {% for e in top_ejercicios %}
+        '{{ e.id_rutina_ejercicio__id_ejercicio__nombre|truncatechars:20 }}'{% if not forloop.last %},{% endif %}
+      {% endfor %}
+    ],
+    datasets: [{
+      label: 'Sesiones',
+      data: [
+        {% for e in top_ejercicios %}
+          {{ e.total }}{% if not forloop.last %},{% endif %}
+        {% endfor %}
+      ],
+      backgroundColor: '#0ea5e9'
+    }]
+  },
+  options: {
+    plugins: { legend: { display: false } },
+    scales: { x: { beginAtZero: true } }
+  }
+});
+</script>
+
+
+
+{% endblock %}

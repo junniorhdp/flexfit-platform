@@ -1,0 +1,23 @@
+{% extends 'core/base.html' %}
+{% block title %}Confirmar Eliminación · FlexFit{% endblock %}
+{% block topbar_title %}Confirmar Eliminación{% endblock %}
+
+{% block content %}
+<div class="confirm-box">
+  <div class="icon">
+    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/>
+      <path d="M10 11v6"/><path d="M14 11v6"/><path d="M9 6V4h6v2"/>
+    </svg>
+  </div>
+  <h3>¿Eliminar {{ tipo }}?</h3>
+  <p>Estás a punto de eliminar <strong>{{ objeto }}</strong>. Esta acción no se puede deshacer.</p>
+  <div class="actions">
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-danger">Sí, eliminar</button>
+    </form>
+    <a href="javascript:history.back()" class="btn btn-outline">Cancelar</a>
+  </div>
+</div>
+{% endblock %}

@@ -1,0 +1,118 @@
+{% extends 'core/base.html' %}
+{% block title %}Usuarios · FlexFit{% endblock %}
+{% block topbar_title %}Gestión de Usuarios{% endblock %}
+{% block nav_usuarios %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Usuarios</h2>
+    <p>Administra todos los usuarios del sistema</p>
+  </div>
+  <a href="{% url 'admin_crear_usuario' %}" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nuevo Usuario
+  </a>
+</div>
+
+<form method="GET" class="search-bar">
+  <div class="search-input-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar por nombre o usuario...">
+  </div>
+  <select name="rol" class="form-control" style="width:160px">
+    <option value="">Todos los roles</option>
+    <option value="Admin" {% if rol_f == 'Admin' %}selected{% endif %}>Admin</option>
+    <option value="Coach" {% if rol_f == 'Coach' %}selected{% endif %}>Coach</option>
+    <option value="Usuario" {% if rol_f == 'Usuario' %}selected{% endif %}>Usuario</option>
+  </select>
+  <button type="submit" class="btn btn-outline">Filtrar</button>
+</form>
+
+<div class="table-wrapper">
+  <table>
+    <thead>
+      <tr>
+        <th>#</th><th>Nombre</th><th>Usuario</th><th>Email</th>
+        <th>Rol</th><th>Registro</th><th>Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for u in usuarios %}
+      <tr>
+        <td style="color:var(--text3)">{{ u.id_usuario }}</td>
+        <td><strong>{{ u.nombre }} {{ u.apellido }}</strong></td>
+        <td><span style="color:var(--text2)">@{{ u.usuario }}</span></td>
+        <td style="color:var(--text2)">{{ u.email }}</td>
+        <td>
+          <span class="badge {% if u.id_tipo_usuario.rol == 'Admin' %}badge-red{% elif u.id_tipo_usuario.rol == 'Coach' %}badge-blue{% else %}badge-green{% endif %}">
+            {{ u.id_tipo_usuario.rol }}
+          </span>
+        </td>
+        <td style="color:var(--text2)">{{ u.fecha_registro }}</td>
+        <td>
+          <div style="display:flex;gap:8px;align-items:center">
+            <div style="position:relative;display:inline-block" class="rol-dropdown-wrap">
+              <button type="button"
+                onclick="toggleRolMenu(this)"
+                class="btn btn-outline btn-sm"
+                style="gap:4px">
+                Cambiar rol
+                <svg width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="6 9 12 15 18 9"/></svg>
+              </button>
+              <div class="rol-menu" style="display:none;position:absolute;top:110%;left:0;background:var(--surface2);border:1px solid var(--border);border-radius:8px;min-width:130px;z-index:100;box-shadow:0 4px 16px rgba(0,0,0,.3);overflow:hidden">
+                {% if u.id_tipo_usuario.rol != 'Usuario' %}
+                <form method="POST" action="{% url 'admin_cambiar_rol' u.id_usuario %}">
+                  {% csrf_token %}<input type="hidden" name="nuevo_rol" value="Usuario">
+                  <button type="submit" style="width:100%;background:none;border:none;padding:10px 16px;text-align:left;cursor:pointer;color:var(--text1);font-size:14px" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='none'">→ Usuario</button>
+                </form>
+                {% endif %}
+                {% if u.id_tipo_usuario.rol != 'Coach' %}
+                <form method="POST" action="{% url 'admin_cambiar_rol' u.id_usuario %}">
+                  {% csrf_token %}<input type="hidden" name="nuevo_rol" value="Coach">
+                  <button type="submit" style="width:100%;background:none;border:none;padding:10px 16px;text-align:left;cursor:pointer;color:var(--text1);font-size:14px" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='none'">→ Coach</button>
+                </form>
+                {% endif %}
+                {% if u.id_tipo_usuario.rol != 'Admin' %}
+                <form method="POST" action="{% url 'admin_cambiar_rol' u.id_usuario %}">
+                  {% csrf_token %}<input type="hidden" name="nuevo_rol" value="Admin">
+                  <button type="submit" style="width:100%;background:none;border:none;padding:10px 16px;text-align:left;cursor:pointer;color:var(--text1);font-size:14px" onmouseover="this.style.background='var(--surface3)'" onmouseout="this.style.background='none'">→ Admin</button>
+                </form>
+                {% endif %}
+              </div>
+            </div>
+            <a href="{% url 'admin_editar_usuario' u.id_usuario %}" class="btn btn-outline btn-sm">Editar</a>
+            <a href="{% url 'admin_eliminar_usuario' u.id_usuario %}" class="btn btn-danger btn-sm">Eliminar</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="7">
+        <div class="empty-state">
+          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          <h3>Sin usuarios</h3>
+          <p>No se encontraron usuarios con esos filtros.</p>
+        </div>
+      </td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<script>
+function toggleRolMenu(btn) {
+  document.querySelectorAll('.rol-menu').forEach(m => {
+    if (m !== btn.nextElementSibling) m.style.display = 'none';
+  });
+  const menu = btn.nextElementSibling;
+  menu.style.display = menu.style.display === 'none' ? 'block' : 'none';
+}
+document.addEventListener('click', function(e) {
+  if (!e.target.closest('.rol-dropdown-wrap')) {
+    document.querySelectorAll('.rol-menu').forEach(m => m.style.display = 'none');
+  }
+});
+</script>
+{% endblock %}

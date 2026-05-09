@@ -1,0 +1,63 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ accion }} Rutina · FlexFit{% endblock %}
+{% block topbar_title %}{{ accion }} Rutina{% endblock %}
+{% if request.session.rol == 'Admin' %}{% block nav_rutinas %}active{% endblock %}{% else %}{% block nav_coach_rutinas %}active{% endblock %}{% endif %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>{{ accion }} Rutina</h2><p>Complete los datos de la rutina</p></div>
+  {% if request.session.rol == 'Admin' %}
+    <a href="{% url 'admin_rutinas' %}" class="btn btn-outline">← Volver</a>
+  {% else %}
+    <a href="{% url 'coach_rutinas' %}" class="btn btn-outline">← Volver</a>
+  {% endif %}
+</div>
+
+<div class="card" style="max-width:720px">
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Nombre de la Rutina *</label>
+      <input type="text" name="nombre" class="form-control" value="{{ obj.nombre|default:'' }}" required placeholder="Ej: Rutina Full Body 3 días">
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Disciplina</label>
+        <input type="text" name="disciplina" class="form-control" value="{{ obj.disciplina|default:'' }}" placeholder="Ej: Musculación, Yoga, Cardio...">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Nivel</label>
+        <select name="id_nivel" class="form-control">
+          <option value="">— Sin nivel —</option>
+          {% for n in niveles %}
+          <option value="{{ n.id_nivel }}" {% if obj.id_nivel_id == n.id_nivel %}selected{% endif %}>{{ n.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Duración Total</label>
+      <input type="text" name="duracion_total" class="form-control" value="{{ obj.duracion_total|default:'' }}" placeholder="Ej: 45 min, 1 hora...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Descripción</label>
+      <textarea name="descripcion" class="form-control" placeholder="Describe los objetivos y estructura de la rutina...">{{ obj.descripcion|default:'' }}</textarea>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Comentarios / Notas</label>
+      <textarea name="comentario" class="form-control" placeholder="Notas adicionales para el usuario...">{{ obj.comentario|default:'' }}</textarea>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        {{ accion }} Rutina
+      </button>
+      {% if request.session.rol == 'Admin' %}
+        <a href="{% url 'admin_rutinas' %}" class="btn btn-outline">Cancelar</a>
+      {% else %}
+        <a href="{% url 'coach_rutinas' %}" class="btn btn-outline">Cancelar</a>
+      {% endif %}
+    </div>
+  </form>
+</div>
+{% endblock %}

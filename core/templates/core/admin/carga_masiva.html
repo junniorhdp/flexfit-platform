@@ -1,0 +1,108 @@
+{% extends 'core/base.html' %}
+{% block title %}Carga Masiva · FlexFit{% endblock %}
+{% block topbar_title %}Carga Masiva de Datos{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Carga Masiva de Datos</h2>
+    <p>Importa ejercicios, usuarios o rutinas desde un archivo Excel (.xlsx) o CSV (.csv)</p>
+  </div>
+</div>
+
+{% if messages %}
+<div style="margin-bottom:1.5rem">
+  {% for msg in messages %}
+  <div class="alert alert-{{ msg.tags }}" style="padding:.75rem 1rem;border-radius:8px;margin-bottom:.5rem;
+    background:{% if 'success' in msg.tags %}#d1fae5;color:#065f46;border:1px solid #6ee7b7
+    {% elif 'warning' in msg.tags %}#fef3c7;color:#92400e;border:1px solid #fcd34d
+    {% else %}#fee2e2;color:#991b1b;border:1px solid #fca5a5{% endif %}">
+    {{ msg }}
+  </div>
+  {% endfor %}
+</div>
+{% endif %}
+
+<!-- Instrucciones de formato -->
+<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:1.5rem;margin-bottom:2rem">
+
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem">
+      <span style="background:#e0f2fe;color:#0369a1;padding:.25rem .5rem;border-radius:6px;font-size:.8rem">XLSX / CSV</span>
+      Ejercicios
+    </h3>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:.75rem">Columnas requeridas:</p>
+    <code style="font-size:.78rem;background:#f8fafc;padding:.5rem .75rem;border-radius:6px;display:block;line-height:1.8">
+      nombre <span style="color:#dc2626">*</span><br>
+      tipo_ejercicio<br>
+      nivel_dificultad (Bajo/Medio/Alto)<br>
+      equipo_necesario<br>
+      instrucciones<br>
+      url_video
+    </code>
+  </div>
+
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem">
+      <span style="background:#e0f2fe;color:#0369a1;padding:.25rem .5rem;border-radius:6px;font-size:.8rem">XLSX / CSV</span>
+      Usuarios
+    </h3>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:.75rem">Columnas requeridas:</p>
+    <code style="font-size:.78rem;background:#f8fafc;padding:.5rem .75rem;border-radius:6px;display:block;line-height:1.8">
+      nombre <span style="color:#dc2626">*</span><br>
+      apellido <span style="color:#dc2626">*</span><br>
+      usuario <span style="color:#dc2626">*</span><br>
+      email <span style="color:#dc2626">*</span><br>
+      contrasena <span style="color:#dc2626">*</span><br>
+      genero (Masculino/Femenino/Otro)<br>
+      edad · objetivo · rol
+    </code>
+  </div>
+
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:1rem;margin-bottom:.75rem;display:flex;align-items:center;gap:.5rem">
+      <span style="background:#e0f2fe;color:#0369a1;padding:.25rem .5rem;border-radius:6px;font-size:.8rem">XLSX / CSV</span>
+      Rutinas
+    </h3>
+    <p style="font-size:.85rem;color:var(--text-secondary);margin-bottom:.75rem">Columnas requeridas:</p>
+    <code style="font-size:.78rem;background:#f8fafc;padding:.5rem .75rem;border-radius:6px;display:block;line-height:1.8">
+      nombre <span style="color:#dc2626">*</span><br>
+      descripcion<br>
+      nivel<br>
+      disciplina<br>
+      duracion_total<br>
+      comentario
+    </code>
+  </div>
+
+</div>
+
+<!-- Formulario de carga -->
+<div class="card" style="padding:2rem;max-width:560px">
+  <h3 style="margin-bottom:1.5rem">Subir archivo</h3>
+  <form method="POST" enctype="multipart/form-data">
+    {% csrf_token %}
+    <div class="form-group">
+      <label class="form-label">Tipo de datos a importar</label>
+      <select name="tipo_carga" class="form-control" required>
+        <option value="">— Selecciona —</option>
+        <option value="ejercicios">Ejercicios</option>
+        <option value="usuarios">Usuarios</option>
+        <option value="rutinas">Rutinas</option>
+      </select>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Archivo (.xlsx o .csv)</label>
+      <input type="file" name="archivo" class="form-control" accept=".xlsx,.csv" required
+             style="padding:.5rem">
+    </div>
+    <button type="submit" class="btn btn-primary" style="width:100%;margin-top:.5rem">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" style="margin-right:.4rem">
+        <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/>
+        <polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/>
+      </svg>
+      Importar datos
+    </button>
+  </form>
+</div>
+{% endblock %}

@@ -1,0 +1,57 @@
+{% extends 'core/base.html' %}
+{% block title %}Registrar Sesión · FlexFit{% endblock %}
+{% block topbar_title %}Registrar Sesión{% endblock %}
+{% block nav_progreso %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Registrar Sesión</h2><p>Documenta tu entrenamiento de hoy</p></div>
+  <a href="{% url 'usuario_progreso' %}" class="btn btn-outline">← Volver</a>
+</div>
+
+<div class="card" style="max-width:600px">
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Ejercicio *</label>
+        <select name="id_ejercicio" class="form-control" required>
+          <option value="">— Selecciona un ejercicio —</option>
+          {% for e in ejercicios %}
+          <option value="{{ e.id_ejercicio }}">{{ e.nombre }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Fecha *</label>
+        <input type="date" name="fecha" class="form-control" required value="{{ today }}">
+      </div>
+    </div>
+    <div class="form-row cols-3">
+      <div class="form-group">
+        <label class="form-label">Series</label>
+        <input type="number" name="series_realizadas" class="form-control" min="1" max="99" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Repeticiones</label>
+        <input type="number" name="repeticiones_realizadas" class="form-control" min="1" max="999" placeholder="0">
+      </div>
+      <div class="form-group">
+        <label class="form-label">Peso (kg)</label>
+        <input type="number" name="peso_usado" class="form-control" step="0.5" min="0" placeholder="0.0">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Comentarios</label>
+      <textarea name="comentarios" class="form-control" placeholder="¿Cómo te fue? Notas adicionales..."></textarea>
+    </div>
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+        Guardar Sesión
+      </button>
+      <a href="{% url 'usuario_progreso' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

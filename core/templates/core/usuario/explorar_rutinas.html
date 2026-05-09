@@ -1,0 +1,48 @@
+{% extends 'core/base.html' %}
+{% block title %}Explorar Rutinas · FlexFit{% endblock %}
+{% block topbar_title %}Explorar Rutinas{% endblock %}
+{% block nav_explorar %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Explorar Rutinas</h2><p>Elige la rutina perfecta para tus objetivos</p></div>
+</div>
+
+{% if rutinas %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px">
+  {% for r in rutinas %}
+  <div class="card" style="display:flex;flex-direction:column;gap:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div style="width:44px;height:44px;background:var(--blue-dim);border-radius:12px;display:flex;align-items:center;justify-content:center;color:var(--blue-light)">
+        <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16"/><circle cx="4" cy="6.5" r="1.5"/><circle cx="20" cy="6.5" r="1.5"/><circle cx="4" cy="17.5" r="1.5"/><circle cx="20" cy="17.5" r="1.5"/></svg>
+      </div>
+      <span class="badge badge-gray">{{ r.id_nivel.nombre|default:"Todos los niveles" }}</span>
+    </div>
+
+    <div>
+      <h3 style="font-size:1.1rem;margin-bottom:6px">{{ r.nombre }}</h3>
+      {% if r.descripcion %}
+      <p style="font-size:13px;color:var(--text2)">{{ r.descripcion|truncatechars:100 }}</p>
+      {% endif %}
+    </div>
+
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      {% if r.disciplina %}<span class="badge badge-blue">{{ r.disciplina }}</span>{% endif %}
+      {% if r.duracion_total %}<span class="badge badge-gray">⏱ {{ r.duracion_total }}</span>{% endif %}
+    </div>
+
+    <a href="{% url 'usuario_seleccionar_rutina' r.id_rutina %}" class="btn btn-primary" style="justify-content:center;margin-top:auto">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+      Añadir a mi plan
+    </a>
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+  <h3>Sin rutinas disponibles</h3>
+  <p>Aún no hay rutinas en el sistema. Contacta a tu coach.</p>
+</div>
+{% endif %}
+{% endblock %}

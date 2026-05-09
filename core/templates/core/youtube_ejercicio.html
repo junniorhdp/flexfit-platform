@@ -1,0 +1,99 @@
+{% extends 'core/base.html' %}
+{% block title %}Videos · {{ ejercicio.nombre }} · FlexFit{% endblock %}
+{% block topbar_title %}Videos del Ejercicio{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>📹 Videos: {{ ejercicio.nombre }}</h2>
+    <p>Tutoriales de YouTube para este ejercicio</p>
+  </div>
+  <a href="javascript:history.back()" class="btn btn-outline">← Volver</a>
+</div>
+
+<!-- Info del ejercicio -->
+<div class="card" style="padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:flex;gap:2rem;flex-wrap:wrap;align-items:center">
+  <div>
+    <span style="font-size:.8rem;color:var(--text-secondary)">Tipo</span><br>
+    <strong>{{ ejercicio.tipo_ejercicio|default:"—" }}</strong>
+  </div>
+
+  <div>
+    <span style="font-size:.8rem;color:var(--text-secondary)">Dificultad</span><br>
+    <span style="padding:.2rem .6rem;border-radius:12px;font-size:.82rem;
+      {% if ejercicio.nivel_dificultad == 'Alto' %}background:#fee2e2;color:#991b1b
+      {% elif ejercicio.nivel_dificultad == 'Medio' %}background:#fef3c7;color:#92400e
+      {% else %}background:#d1fae5;color:#065f46{% endif %}">
+      {{ ejercicio.nivel_dificultad }}
+    </span>
+  </div>
+
+  {% if ejercicio.equipo_necesario %}
+  <div>
+    <span style="font-size:.8rem;color:var(--text-secondary)">Equipo</span><br>
+    <strong>{{ ejercicio.equipo_necesario }}</strong>
+  </div>
+  {% endif %}
+</div>
+
+{% if videos %}
+<div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:1.5rem">
+  {% for v in videos %}
+  <div class="card" style="overflow:hidden;padding:0">
+    
+    <!-- VIDEO -->
+    <div style="position:relative;padding-top:56.25%">
+      <iframe
+        src="{{ v.embed_url }}"
+        style="position:absolute;top:0;left:0;width:100%;height:100%;border:none"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen>
+      </iframe>
+    </div>
+
+    <!-- INFO -->
+    <div style="padding:1rem">
+      <p style="font-size:.9rem;font-weight:600;margin:0 0 .5rem;line-height:1.4">
+        {{ v.titulo }}
+      </p>
+
+      <a href="{{ v.url }}" target="_blank" rel="noopener"
+         style="font-size:.8rem;color:var(--primary);text-decoration:none">
+        Ver en YouTube ↗
+      </a>
+    </div>
+
+  </div>
+  {% endfor %}
+</div>
+
+{% else %}
+<div class="card" style="padding:2rem;text-align:center;color:var(--text-secondary)">
+  <p style="font-size:2rem;margin-bottom:.5rem">🎬</p>
+  <p>No se encontraron videos en este momento.</p>
+  <p style="font-size:.85rem">
+    Verifica que la clave de YouTube API esté configurada en <code>settings.py</code>,
+    o busca directamente en
+    <a href="https://www.youtube.com/results?search_query={{ ejercicio.nombre|urlencode }}+ejercicio+tutorial"
+       target="_blank" rel="noopener" style="color:var(--primary)">
+       YouTube
+    </a>.
+  </p>
+</div>
+{% endif %}
+
+<!-- Video propio del ejercicio -->
+{% if ejercicio.url_video %}
+<div style="margin-top:2rem">
+  <h3 style="margin-bottom:1rem">Video guardado en el ejercicio</h3>
+  <div class="card" style="padding:1rem">
+    <a href="{{ ejercicio.url_video }}" target="_blank" rel="noopener"
+       style="color:var(--primary)">
+       {{ ejercicio.url_video }}
+    </a>
+  </div>
+</div>
+{% endif %}
+
+{% endblock %}

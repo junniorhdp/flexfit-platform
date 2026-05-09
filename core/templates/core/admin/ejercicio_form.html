@@ -1,0 +1,118 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ accion }} Ejercicio · FlexFit{% endblock %}
+{% block topbar_title %}{{ accion }} Ejercicio{% endblock %}
+{% if request.session.rol == 'Admin' %}
+  {% block nav_ejercicios %}active{% endblock %}
+{% else %}
+  {% block nav_coach_ejercicios %}active{% endblock %}
+{% endif %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>{{ accion }} Ejercicio</h2>
+    <p>Complete los datos del ejercicio</p>
+  </div>
+
+  {% if request.session.rol == 'Admin' %}
+    <a href="{% url 'admin_ejercicios' %}" class="btn btn-outline">← Volver</a>
+  {% else %}
+    <a href="{% url 'coach_ejercicios' %}" class="btn btn-outline">← Volver</a>
+  {% endif %}
+</div>
+
+<div class="card" style="max-width:720px">
+  <form method="POST">
+    {% csrf_token %}
+
+    <!-- NOMBRE + TIPO -->
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Nombre del Ejercicio *</label>
+        <input type="text" name="nombre" class="form-control"
+               value="{{ obj.nombre|default:'' }}"
+               required placeholder="Ej: Press de banca">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Tipo de Ejercicio</label>
+        <select name="tipo_ejercicio" class="form-control">
+          <option value="">— Sin tipo —</option>
+          {% for t in tipos %}
+            <option value="{{ t.id_tipo }}"
+              {% if obj.tipo_ejercicio_id == t.id_tipo %}selected{% endif %}>
+              {{ t.nombre }}
+            </option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+
+    <!-- DIFICULTAD -->
+    <div class="form-group">
+      <label class="form-label">Nivel de Dificultad *</label>
+      <select name="nivel_dificultad" class="form-control" required>
+        <option value="Bajo" {% if obj.nivel_dificultad == 'Bajo' %}selected{% endif %}>Bajo</option>
+        <option value="Medio" {% if obj.nivel_dificultad == 'Medio' %}selected{% endif %}>Medio</option>
+        <option value="Alto" {% if obj.nivel_dificultad == 'Alto' %}selected{% endif %}>Alto</option>
+      </select>
+    </div>
+
+    <!-- EQUIPO -->
+    <div class="form-group">
+      <label class="form-label">Equipo Necesario</label>
+      <input type="text" name="equipo_necesario" class="form-control"
+             value="{{ obj.equipo_necesario|default:'' }}"
+             placeholder="Ej: Barra, mancuernas, ninguno...">
+    </div>
+
+    <!-- INSTRUCCIONES -->
+    <div class="form-group">
+      <label class="form-label">Instrucciones</label>
+      <textarea name="instrucciones" class="form-control"
+                placeholder="Describe cómo realizar el ejercicio...">{{ obj.instrucciones|default:'' }}</textarea>
+    </div>
+
+    <!-- 🔥 VIDEOS (NUEVO) -->
+    <div class="form-group">
+      <label class="form-label">Videos de YouTube</label>
+
+      <input type="url"
+             name="url_video_1"
+             class="form-control"
+             placeholder="Video 1 (opcional)"
+             style="margin-bottom:8px">
+
+      <input type="url"
+             name="url_video_2"
+             class="form-control"
+             placeholder="Video 2 (opcional)"
+             style="margin-bottom:8px">
+
+      <input type="url"
+             name="url_video_3"
+             class="form-control"
+             placeholder="Video 3 (opcional)">
+    </div>
+
+    <!-- BOTONES -->
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+          <polyline points="17 21 17 13 7 13 7 21"/>
+          <polyline points="7 3 7 8 15 8"/>
+        </svg>
+        {{ accion }} Ejercicio
+      </button>
+
+      {% if request.session.rol == 'Admin' %}
+        <a href="{% url 'admin_ejercicios' %}" class="btn btn-outline">Cancelar</a>
+      {% else %}
+        <a href="{% url 'coach_ejercicios' %}" class="btn btn-outline">Cancelar</a>
+      {% endif %}
+    </div>
+
+  </form>
+</div>
+{% endblock %}

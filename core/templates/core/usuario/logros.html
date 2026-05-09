@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+{% block title %}Logros · FlexFit{% endblock %}
+{% block topbar_title %}Mis Logros{% endblock %}
+{% block nav_logros %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Logros</h2><p>Tu colección de achievements</p></div>
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 20px;display:flex;align-items:center;gap:10px">
+    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--warning)">{{ mis_logros|length }}</span>
+    <span style="font-size:13px;color:var(--text2)">/ {{ todos_logros|length }} desbloqueados</span>
+  </div>
+</div>
+
+{% if todos_logros %}
+<div class="achievement-grid">
+  {% for logro in todos_logros %}
+  <div class="achievement-card {% if logro.id_logro in ids_obtenidos %}unlocked{% endif %}">
+    <div class="ach-icon">{% if logro.id_logro in ids_obtenidos %}🏆{% else %}🔒{% endif %}</div>
+    <h4>{{ logro.nombre }}</h4>
+    <p>{{ logro.descripcion|default:""|truncatechars:80 }}</p>
+    {% if logro.requisito %}
+    <div style="margin-top:10px;font-size:11px;color:var(--text3);background:var(--bg3);border-radius:6px;padding:6px 10px">
+      {{ logro.requisito }}
+    </div>
+    {% endif %}
+    {% if logro.id_logro in ids_obtenidos %}
+    <div style="margin-top:10px">
+      <span class="badge badge-green">✓ Obtenido</span>
+    </div>
+    {% endif %}
+  </div>
+  {% endfor %}
+</div>
+{% else %}
+<div class="empty-state">
+  <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+  <h3>Sin logros disponibles</h3>
+  <p>Los logros se configuran desde el panel de administración.</p>
+</div>
+{% endif %}
+{% endblock %}

@@ -1,0 +1,603 @@
+{% extends 'core/base.html' %}
+{% block title %}Mi Rutina · FlexFit{% endblock %}
+{% block topbar_title %}Mi Rutina{% endblock %}
+{% block nav_mi_rutina %}active{% endblock %}
+{% load dict_filters %}
+
+{% block extra_css %}
+<style>
+
+/* ───────────────── HERO ───────────────── */
+.hero-rutina{
+   position:relative;
+   overflow:hidden;
+   isolation:isolate;
+   border-radius:28px;
+   padding:2.5rem;
+   background:
+    radial-gradient(circle at top right, rgba(255,0,90,.35), transparent 35%),
+    radial-gradient(circle at bottom left, rgba(0,180,255,.28), transparent 40%),
+    linear-gradient(135deg,#111827,#0f172a,#1e293b);
+  border:1px solid rgba(255,255,255,.06);
+  margin-bottom:2rem;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+
+.hero-rutina::before{
+  content:'';
+  position:relative;
+  inset:0;
+  backdrop-filter:blur(10px);
+}
+
+.hero-content{
+  position:relative;
+  z-index:2;
+}
+
+.hero-title{
+  font-size:2.4rem;
+  font-weight:900;
+  line-height:1.1;
+  margin-bottom:.7rem;
+
+  background:linear-gradient(90deg,#fff,#93c5fd,#22c55e);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+
+  letter-spacing:-1px;
+}
+
+.hero-sub{
+  color:rgba(255,255,255,.75);
+  margin-bottom:2rem;
+  font-size:1rem;
+}
+
+.hero-stats{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(140px,1fr));
+  gap:1rem;
+  margin-top:1.5rem;
+}
+
+.hero-stat{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  border-radius:18px;
+  padding:1rem;
+  backdrop-filter:blur(12px);
+}
+
+.hero-stat strong{
+  display:block;
+  font-size:1.6rem;
+  color:white;
+}
+
+.hero-stat span{
+  color:rgba(255,255,255,.65);
+  font-size:.9rem;
+}
+
+/* ───────────────── CALENDARIO ───────────────── */
+.week-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+  gap:1rem;
+  margin-bottom:2rem;
+}
+
+.day-card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:22px;
+  padding:1rem;
+  transition:.25s ease;
+  position:relative;
+  overflow:hidden;
+}
+
+.day-card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 20px 40px rgba(0,0,0,.18);
+}
+
+.day-card.active-day{
+  border-color:#22c55e;
+  background:linear-gradient(135deg,rgba(34,197,94,.12),rgba(255,255,255,.02));
+}
+
+.day-title{
+  font-weight:700;
+  margin-bottom:.5rem;
+}
+
+.day-status{
+  font-size:.9rem;
+  color:var(--text2);
+}
+
+/* ───────────────── RUTINA CARD ───────────────── */
+.rutina-card{
+  background:rgba(255,255,255,.04);
+  border:1px solid rgba(255,255,255,.06);
+  border-radius:28px;
+  overflow:hidden;
+  backdrop-filter:blur(14px);
+  transition:.25s ease;
+  margin-bottom:2rem;
+}
+
+.rutina-card:hover{
+  transform:translateY(-4px);
+  box-shadow:0 25px 50px rgba(0,0,0,.25);
+}
+
+.rutina-header{
+  padding:1.5rem;
+  background:linear-gradient(135deg,rgba(255,255,255,.05),rgba(255,255,255,.01));
+  border-bottom:1px solid rgba(255,255,255,.06);
+}
+
+.rutina-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  flex-wrap:wrap;
+}
+
+.rutina-title{
+  font-size:1.5rem;
+  font-weight:800;
+  color:white;
+}
+
+.rutina-desc{
+  color:var(--text2);
+  line-height:1.7;
+  margin-top:1rem;
+}
+
+.badges{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.6rem;
+  margin-top:1rem;
+}
+
+.badge-modern{
+  padding:.45rem .9rem;
+  border-radius:999px;
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.08);
+  font-size:.82rem;
+  color:white;
+}
+
+/* ───────────────── PROGRESS ───────────────── */
+.progress-wrapper{
+  margin-top:1.4rem;
+}
+
+.progress-bar-bg{
+  width:100%;
+  height:14px;
+  background:rgba(255,255,255,.08);
+  border-radius:999px;
+  overflow:hidden;
+}
+
+.progress-bar-fill{
+  height:100%;
+  border-radius:999px;
+  background:linear-gradient(90deg,#22c55e,#06b6d4,#3b82f6);
+  box-shadow:0 0 20px rgba(34,197,94,.4);
+  animation:growBar 1.2s ease;
+}
+
+@keyframes growBar{
+  from{width:0;}
+}
+
+/* ───────────────── EJERCICIOS ───────────────── */
+.exercise-grid{
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+  gap:1rem;
+  padding:1.5rem;
+}
+
+.exercise-card{
+  position:relative;
+  overflow:hidden;
+  border-radius:24px;
+  padding:1.2rem;
+  background:linear-gradient(145deg,rgba(255,255,255,.05),rgba(255,255,255,.015));
+  border:1px solid rgba(255,255,255,.06);
+  transition:.25s ease;
+}
+
+.exercise-card:hover{
+  transform:
+    translateY(-8px)
+    rotateX(2deg)
+    rotateY(-2deg)
+    scale(1.015);
+
+  box-shadow:
+    0 25px 50px rgba(0,0,0,.35),
+    0 0 30px rgba(59,130,246,.15);
+}
+
+.rutina-card::before,
+.exercise-card::before{
+  content:'';
+  position:absolute;
+  top:-50%;
+  left:-50%;
+  width:200%;
+  height:200%;
+  background:
+    radial-gradient(circle,
+    rgba(255,255,255,.08),
+    transparent 35%);
+  transform:rotate(25deg);
+  pointer-events:none;
+}
+
+.rutina-card,
+.day-card,
+.exercise-card{
+  animation:fadeUp .7s ease both;
+}
+
+@keyframes fadeUp{
+  from{
+    opacity:0;
+    transform:translateY(20px);
+  }
+  to{
+    opacity:1;
+    transform:translateY(0);
+  }
+}
+
+.exercise-top{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:1rem;
+  margin-bottom:1rem;
+}
+
+.exercise-name{
+  font-size:1.1rem;
+  font-weight:700;
+  color:white;
+}
+
+.exercise-video{
+  font-size:.82rem;
+  text-decoration:none;
+  color:#ef4444;
+  font-weight:600;
+}
+
+.exercise-meta{
+  display:flex;
+  flex-wrap:wrap;
+  gap:.6rem;
+  margin-bottom:1rem;
+}
+
+.exercise-chip{
+  background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.06);
+  padding:.45rem .8rem;
+  border-radius:999px;
+  font-size:.82rem;
+  color:#e5e7eb;
+}
+
+.exercise-info{
+  color:var(--text2);
+  font-size:.92rem;
+  line-height:1.6;
+}
+
+/* ───────────────── LIVE SESSION ───────────────── */
+.live-session{
+  margin-top:1.5rem;
+  display:flex;
+  flex-wrap:wrap;
+  gap:1rem;
+}
+
+.live-pill{
+  background:rgba(34,197,94,.12);
+  border:1px solid rgba(34,197,94,.25);
+  color:#86efac;
+  padding:.75rem 1rem;
+  border-radius:18px;
+  font-weight:600;
+}
+
+/* ───────────────── EMPTY ───────────────── */
+.empty-premium{
+  text-align:center;
+  padding:4rem 2rem;
+  border-radius:28px;
+  background:linear-gradient(145deg,#111827,#1e293b);
+  border:1px solid rgba(255,255,255,.06);
+}
+
+.empty-premium h3{
+  color:white;
+  margin-top:1rem;
+}
+
+.empty-premium p{
+  color:rgba(255,255,255,.7);
+}
+
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="hero-rutina">
+  <div class="hero-content">
+
+    <div style="display:flex;justify-content:space-between;gap:2rem;flex-wrap:wrap;align-items:center">
+
+      <div>
+        <h1 class="hero-title">🔥 Sigue así, {{ request.session.nombre }}</h1>
+        <p class="hero-sub">
+          Cada entrenamiento te acerca más a tu mejor versión.
+        </p>
+      </div>
+
+      <a href="{% url 'usuario_explorar_rutinas' %}" class="btn btn-primary">
+        🔎 Explorar rutinas
+      </a>
+
+    </div>
+
+    <div class="hero-stats">
+
+      <div class="hero-stat">
+        <strong>{{ semana_rutina|length }}</strong>
+        <span>Días activos</span>
+      </div>
+
+      <div class="hero-stat">
+        <strong>🔥</strong>
+        <span>Modo disciplina</span>
+      </div>
+
+      <div class="hero-stat">
+        <strong>💪</strong>
+        <span>Rutinas premium</span>
+      </div>
+
+      <div class="hero-stat">
+        <strong>⚡</strong>
+        <span>Progreso constante</span>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+{% if semana_rutina %}
+
+<!-- ───────────── CALENDARIO VISUAL ───────────── -->
+<div class="week-grid">
+
+{% for dia in orden_semana %}
+{% with data=semana_rutina|get_item:dia %}
+
+<div class="day-card {% if data %}active-day{% endif %}">
+  <div class="day-title">📅 {{ dia }}</div>
+
+  {% if data %}
+    <div class="day-status">
+      {{ data.rutina.nombre }}
+    </div>
+  {% else %}
+    <div class="day-status">
+      Descanso 😴
+    </div>
+  {% endif %}
+</div>
+
+{% endwith %}
+{% endfor %}
+
+</div>
+
+<!-- ───────────── RUTINAS ───────────── -->
+
+{% for dia in orden_semana %}
+{% with data=semana_rutina|get_item:dia %}
+
+{% if data %}
+{% with ru=data.rutina_usuario rutina=data.rutina ejercicios=data.ejercicios %}
+
+<div class="rutina-card">
+
+  <div class="rutina-header">
+
+    <div class="rutina-top">
+
+      <div>
+        <div class="rutina-title">
+          {{ rutina.nombre }}
+        </div>
+
+        <div class="badges">
+
+          <span class="badge-modern">
+            📅 {{ dia }}
+          </span>
+
+          {% if rutina.disciplina %}
+          <span class="badge-modern">
+            🔥 {{ rutina.disciplina }}
+          </span>
+          {% endif %}
+
+          {% if rutina.id_nivel %}
+          <span class="badge-modern">
+            ⚡ {{ rutina.id_nivel.nombre }}
+          </span>
+          {% endif %}
+
+          {% if rutina.duracion_total %}
+          <span class="badge-modern">
+            ⏱ {{ rutina.duracion_total }}
+          </span>
+          {% endif %}
+
+        </div>
+      </div>
+
+      {% if ru.estado == 'Activa' %}
+      <a href="{% url 'usuario_iniciar_rutina' ru.pk %}" class="btn btn-primary">
+        ▶ Empezar rutina
+      </a>
+      {% endif %}
+
+    </div>
+
+    {% if rutina.descripcion %}
+    <div class="rutina-desc">
+      {{ rutina.descripcion }}
+    </div>
+    {% endif %}
+
+    <!-- PROGRESS -->
+    <div class="progress-wrapper">
+
+      <div style="display:flex;justify-content:space-between;margin-bottom:.6rem;color:var(--text2)">
+        <span>Progreso semanal</span>
+        <span>75%</span>
+      </div>
+
+      <div class="progress-bar-bg">
+        <div class="progress-bar-fill" style="width:75%"></div>
+      </div>
+
+    </div>
+
+    <!-- LIVE -->
+    <div class="live-session">
+
+      <div class="live-pill">
+        🔥 Rutina activa
+      </div>
+
+      <div class="live-pill">
+        💪 {{ ejercicios|length }} ejercicios
+      </div>
+
+      <div class="live-pill">
+        ⚡ Nivel entrenamiento
+      </div>
+
+    </div>
+
+  </div>
+
+  <!-- EJERCICIOS -->
+  <div class="exercise-grid">
+
+    {% for e in ejercicios %}
+
+    <div class="exercise-card">
+
+      <div class="exercise-top">
+
+        <div class="exercise-name">
+          {{ forloop.counter }}. {{ e.id_ejercicio.nombre }}
+        </div>
+
+        <a href="{% url 'youtube_ejercicio' e.id_ejercicio.id_ejercicio %}" class="exercise-video">
+          📹 Videos
+        </a>
+
+      </div>
+
+      <div class="exercise-meta">
+
+        {% if e.series %}
+        <div class="exercise-chip">
+          💥 {{ e.series }} series
+        </div>
+        {% endif %}
+
+        {% if e.repeticiones %}
+        <div class="exercise-chip">
+          🔁 {{ e.repeticiones }} reps
+        </div>
+        {% endif %}
+
+        {% if e.descanso %}
+        <div class="exercise-chip">
+          ⏱ {{ e.descanso }} descanso
+        </div>
+        {% endif %}
+
+      </div>
+
+      {% if e.id_ejercicio.equipo_necesario %}
+      <div class="exercise-info" style="margin-bottom:.8rem">
+        🏋️ {{ e.id_ejercicio.equipo_necesario }}
+      </div>
+      {% endif %}
+
+      {% if e.id_ejercicio.instrucciones %}
+      <div class="exercise-info">
+        📋 {{ e.id_ejercicio.instrucciones }}
+      </div>
+      {% endif %}
+
+    </div>
+
+    {% endfor %}
+
+  </div>
+
+</div>
+
+{% endwith %}
+{% endif %}
+
+{% endwith %}
+{% endfor %}
+
+{% else %}
+
+<div class="empty-premium">
+
+  <div style="font-size:4rem">🏃</div>
+
+  <h3>Aún no tienes rutinas</h3>
+
+  <p>
+    Explora el catálogo y empieza tu transformación.
+  </p>
+
+  <div style="margin-top:1.5rem">
+    <a href="{% url 'usuario_explorar_rutinas' %}" class="btn btn-primary">
+      Explorar rutinas
+    </a>
+  </div>
+
+</div>
+
+{% endif %}
+
+{% endblock %}

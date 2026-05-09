@@ -1,0 +1,36 @@
+{% extends 'core/base.html' %}
+{% block title %}Tipos de Ejercicio · FlexFit{% endblock %}
+{% block topbar_title %}Tipos de Ejercicio{% endblock %}
+{% block nav_tipos %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Tipos de Ejercicio</h2><p>Categorías para clasificar los ejercicios</p></div>
+  <a href="{% url 'admin_crear_tipo_ejercicio' %}" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nuevo Tipo
+  </a>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead><tr><th>#</th><th>Nombre</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for t in tipos %}
+      <tr>
+        <td style="color:var(--text3)">{{ t.id_tipo }}</td>
+        <td><strong>{{ t.nombre }}</strong></td>
+        <td>
+          <div style="display:flex;gap:8px">
+            <a href="{% url 'admin_editar_tipo_ejercicio' t.id_tipo %}" class="btn btn-outline btn-sm">Editar</a>
+            <a href="{% url 'admin_eliminar_tipo_ejercicio' t.id_tipo %}" class="btn btn-danger btn-sm">Eliminar</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="3"><div class="empty-state"><h3>Sin tipos</h3><p>No hay tipos de ejercicio creados.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

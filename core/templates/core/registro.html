@@ -1,0 +1,80 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <title>FlexFit · Registro</title>
+  <link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-container">
+    <div class="auth-left">
+      <div class="brand">FLEXFIT</div>
+      <div class="brand-sub">Tu plataforma de entrenamiento inteligente</div>
+      <div class="features">
+        <div class="auth-feature"><div class="dot"></div>Rutinas personalizadas por coaches expertos</div>
+        <div class="auth-feature"><div class="dot"></div>Seguimiento de progreso en tiempo real</div>
+        <div class="auth-feature"><div class="dot"></div>Sistema de logros y motivación</div>
+        <div class="auth-feature"><div class="dot"></div>Gestión completa de ejercicios y tipos</div>
+      </div>
+    </div>
+    <div class="auth-right">
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}">
+          {% if message.tags == 'success' %}✓{% else %}✕{% endif %} {{ message }}
+        </div>
+      {% endfor %}
+      <div class="auth-tabs">
+    <a href="{% url 'login' %}" class="auth-tab">
+        Iniciar Sesión
+    </a>
+    <button class="auth-tab active">Crear Cuenta</button>
+</div>
+      <h2>Crear Cuenta</h2>
+      <p class="sub">Regístrate para comenzar tu entrenamiento</p>
+      <form method="POST" action="{% url 'registro' %}">
+        {% csrf_token %}
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label class="form-label">Nombre *</label>
+            <input type="text" name="nombre" class="form-control" placeholder="Nombre" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Apellido *</label>
+            <input type="text" name="apellido" class="form-control" placeholder="Apellido" required>
+          </div>
+        </div>
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label class="form-label">Usuario *</label>
+            <input type="text" name="usuario" class="form-control" placeholder="@usuario" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Género</label>
+            <select name="genero" class="form-control">
+              <option>Masculino</option><option>Femenino</option><option>Otro</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label">Email *</label>
+          <input type="email" name="email" class="form-control" required>
+        </div>
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label class="form-label">Contraseña *</label>
+            <input type="password" name="contrasena" class="form-control" required minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar *</label>
+            <input type="password" name="contrasena2" class="form-control" required>
+          </div>
+        </div>
+        <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center">Registrarse</button>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

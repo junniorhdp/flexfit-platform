@@ -1,0 +1,39 @@
+{% extends 'core/base.html' %}
+{% block title %}Rutinas · FlexFit{% endblock %}
+{% block topbar_title %}Gestión de Rutinas{% endblock %}
+{% block nav_rutinas %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Rutinas</h2><p>Administra el catálogo de rutinas de entrenamiento</p></div>
+  <a href="{% url 'admin_crear_rutina' %}" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+    Nueva Rutina
+  </a>
+</div>
+
+<div class="table-wrapper">
+  <table>
+    <thead><tr><th>#</th><th>Nombre</th><th>Disciplina</th><th>Nivel</th><th>Duración</th><th>Acciones</th></tr></thead>
+    <tbody>
+      {% for r in rutinas %}
+      <tr>
+        <td style="color:var(--text3)">{{ r.id_rutina }}</td>
+        <td><strong>{{ r.nombre }}</strong><div style="font-size:12px;color:var(--text3);margin-top:2px">{{ r.descripcion|truncatechars:60 }}</div></td>
+        <td><span class="badge badge-blue">{{ r.disciplina|default:"General" }}</span></td>
+        <td><span class="badge badge-gray">{{ r.id_nivel.nombre|default:"—" }}</span></td>
+        <td style="color:var(--text2)">{{ r.duracion_total|default:"—" }}</td>
+        <td>
+          <div style="display:flex;gap:8px">
+            <a href="{% url 'admin_editar_rutina' r.id_rutina %}" class="btn btn-outline btn-sm">Editar</a>
+            <a href="{% url 'admin_eliminar_rutina' r.id_rutina %}" class="btn btn-danger btn-sm">Eliminar</a>
+          </div>
+        </td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="6"><div class="empty-state"><h3>Sin rutinas</h3><p>Aún no hay rutinas creadas.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

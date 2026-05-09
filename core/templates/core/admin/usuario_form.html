@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% block title %}{{ accion }} Usuario · FlexFit{% endblock %}
+{% block topbar_title %}{{ accion }} Usuario{% endblock %}
+{% block nav_usuarios %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>{{ accion }} Usuario</h2>
+    <p>{% if accion == 'Crear' %}Registra un nuevo usuario en el sistema{% else %}Modifica los datos del usuario{% endif %}</p>
+  </div>
+  <a href="{% url 'admin_usuarios' %}" class="btn btn-outline">← Volver</a>
+</div>
+
+<div class="card" style="max-width:720px">
+  <form method="POST">
+    {% csrf_token %}
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Nombre *</label>
+        <input type="text" name="nombre" class="form-control" value="{{ user_obj.nombre|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Apellido *</label>
+        <input type="text" name="apellido" class="form-control" value="{{ user_obj.apellido|default:'' }}" required>
+      </div>
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Nombre de Usuario *</label>
+        <input type="text" name="usuario" class="form-control" value="{{ user_obj.usuario|default:'' }}" required>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Género</label>
+        <select name="genero" class="form-control">
+          <option value="Masculino" {% if user_obj.genero == 'Masculino' %}selected{% endif %}>Masculino</option>
+          <option value="Femenino" {% if user_obj.genero == 'Femenino' %}selected{% endif %}>Femenino</option>
+          <option value="Otro" {% if user_obj.genero == 'Otro' %}selected{% endif %}>Otro</option>
+        </select>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Email *</label>
+      <input type="email" name="email" class="form-control" value="{{ user_obj.email|default:'' }}" required>
+    </div>
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Tipo de Usuario *</label>
+        <select name="id_tipo_usuario" class="form-control" required>
+          {% for t in tipos %}
+          <option value="{{ t.id_tipo_usuario }}" {% if user_obj.id_tipo_usuario_id == t.id_tipo_usuario %}selected{% endif %}>{{ t.rol }}</option>
+          {% endfor %}
+        </select>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Edad</label>
+        <input type="number" name="edad" class="form-control" value="{{ user_obj.edad|default:'' }}" min="1" max="120">
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Objetivo</label>
+      <input type="text" name="objetivo" class="form-control" value="{{ user_obj.objetivo|default:'' }}" placeholder="Ej: Perder peso, ganar masa muscular...">
+    </div>
+    <div class="form-group">
+      <label class="form-label">Contraseña {% if accion == 'Editar' %}<span style="color:var(--text3);font-weight:400">(dejar vacío para no cambiar)</span>{% else %}*{% endif %}</label>
+      <input type="password" name="contrasena" class="form-control" {% if accion == 'Crear' %}required minlength="6"{% endif %} placeholder="••••••••">
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        {{ accion }} Usuario
+      </button>
+      <a href="{% url 'admin_usuarios' %}" class="btn btn-outline">Cancelar</a>
+    </div>
+  </form>
+</div>
+{% endblock %}

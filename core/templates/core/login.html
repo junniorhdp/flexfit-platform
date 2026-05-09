@@ -1,0 +1,67 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>FlexFit · Acceso</title>
+  <link rel="stylesheet" href="{% static 'core/css/main.css' %}">
+</head>
+<body>
+<div class="auth-page">
+  <div class="auth-container">
+
+    <!-- Lado izquierdo decorativo -->
+    <div class="auth-left">
+      <div class="brand">FLEXFIT</div>
+      <div class="brand-sub">Tu plataforma de entrenamiento inteligente</div>
+      <div class="features">
+        <div class="auth-feature"><div class="dot"></div>Rutinas personalizadas por coaches expertos</div>
+        <div class="auth-feature"><div class="dot"></div>Seguimiento de progreso en tiempo real</div>
+        <div class="auth-feature"><div class="dot"></div>Sistema de logros y motivación</div>
+        <div class="auth-feature"><div class="dot"></div>Gestión completa de ejercicios y tipos</div>
+      </div>
+    </div>
+
+    <!-- Formularios -->
+    <div class="auth-right">
+      {% for message in messages %}
+        <div class="alert alert-{% if message.tags == 'error' %}error{% elif message.tags == 'success' %}success{% else %}info{% endif %}" style="margin-bottom:16px">
+          {% if message.tags == 'success' %}✓{% else %}✕{% endif %} {{ message }}
+        </div>
+      {% endfor %}
+
+      <div class="auth-tabs">
+  <a href="{% url 'login' %}" class="auth-tab active">
+    Iniciar Sesión
+  </a>
+
+  <a href="{% url 'registro' %}" class="auth-tab">
+    Crear Cuenta
+  </a>
+</div>
+
+      <!-- TAB LOGIN -->
+<div id="tab-login" class="tab-content active">
+  <h2>Bienvenido</h2>
+  <p class="sub">Ingresa tus credenciales para continuar</p>
+
+  <form method="POST" action="{% url 'login' %}">
+    {% csrf_token %}
+    <input type="hidden" name="form_type" value="login">
+
+    <div class="form-group">
+      <label class="form-label">Usuario</label>
+      <input type="text" name="usuario" class="form-control" placeholder="Tu nombre de usuario" required autofocus>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Contraseña</label>
+      <input type="password" name="contrasena" class="form-control" placeholder="••••••••" required>
+    </div>
+
+    <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
+      Ingresar
+    </button>
+  </form>
+</div>

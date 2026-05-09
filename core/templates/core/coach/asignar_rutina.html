@@ -1,0 +1,112 @@
+{% extends 'core/base.html' %}
+{% block title %}Asignar Rutina · FlexFit{% endblock %}
+{% block topbar_title %}Asignar Rutina{% endblock %}
+{% block nav_coach_rutinas %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Asignar Rutina</h2>
+    <p>Asigna <strong>{{ rutina.nombre }}</strong> a un usuario</p>
+  </div>
+  <a href="{% url 'coach_rutinas' %}" class="btn btn-outline">← Volver</a>
+</div>
+
+<div class="card" style="max-width:700px">
+
+  <div style="background:var(--bg3);border-radius:var(--radius);padding:16px 20px;margin-bottom:24px;border:1px solid var(--border)">
+    <div style="font-size:12px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em;margin-bottom:4px">
+      Rutina seleccionada
+    </div>
+    <div style="font-weight:700;font-size:1.1rem">{{ rutina.nombre }}</div>
+    <div style="font-size:13px;color:var(--text2);margin-top:4px">
+      {{ rutina.disciplina|default:"General" }} · {{ rutina.duracion_total|default:"Sin duración" }}
+    </div>
+  </div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="form-group">
+      <label class="form-label">Seleccionar Usuario *</label>
+      <select name="id_usuario" class="form-control" required>
+        <option value="">— Elige un usuario —</option>
+        {% for u in usuarios %}
+        <option value="{{ u.id_usuario }}">
+          {{ u.nombre }} {{ u.apellido }} (@{{ u.usuario }})
+        </option>
+        {% endfor %}
+      </select>
+    </div>
+
+    <div class="form-row cols-2">
+      <div class="form-group">
+        <label class="form-label">Fecha de Inicio</label>
+        <input type="date" name="fecha_inicio" class="form-control">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Fecha Final</label>
+        <input type="date" name="fecha_final" class="form-control">
+      </div>
+    </div>
+
+    <!-- DÍAS -->
+    <div class="form-group">
+      <label class="form-label">Días de Entrenamiento *</label>
+
+      <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Lunes"> Lunes
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Martes"> Martes
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Miércoles"> Miércoles
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Jueves"> Jueves
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Viernes"> Viernes
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Sábado"> Sábado
+        </label>
+
+        <label class="card" style="padding:10px;cursor:pointer">
+          <input type="checkbox" name="dias" value="Domingo"> Domingo
+        </label>
+
+      </div>
+    </div>
+
+    <div class="form-group">
+      <label class="form-label">Notas / Adaptaciones</label>
+      <textarea
+        name="adaptaciones"
+        class="form-control"
+        placeholder="Ej: bajar peso en sentadilla, evitar impacto, aumentar descanso..."
+      ></textarea>
+    </div>
+
+    <div style="display:flex;gap:12px;margin-top:8px">
+      <button type="submit" class="btn btn-primary">
+        Asignar Rutina
+      </button>
+
+      <a href="{% url 'coach_rutinas' %}" class="btn btn-outline">
+        Cancelar
+      </a>
+    </div>
+
+  </form>
+</div>
+{% endblock %}

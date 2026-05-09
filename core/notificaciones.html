@@ -1,0 +1,55 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Notificaciones · FlexFit{% endblock %}
+{% block topbar_title %}Notificaciones{% endblock %}
+{% block nav_notif %}active{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+  <div>
+    <h2>Notificaciones</h2>
+    <p>Tus últimas actividades y alertas</p>
+  </div>
+</div>
+
+{% if notificaciones %}
+
+<div class="card-list">
+
+  {% for n in notificaciones %}
+  <div class="modern-card" style="margin-bottom:14px">
+
+    <div style="display:flex;justify-content:space-between;gap:20px">
+      <div>
+        <div style="font-weight:600">
+          {{ n.mensaje }}
+        </div>
+
+        <div style="margin-top:8px;font-size:12px;color:var(--text3)">
+          {{ n.fecha_hora }}
+        </div>
+      </div>
+
+      {% if n.estado == 'No Leída' %}
+      <span class="badge badge-blue">
+        Nueva
+      </span>
+      {% endif %}
+    </div>
+
+  </div>
+  {% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-state">
+  <h3>Sin notificaciones</h3>
+  <p>Aún no tienes actividad reciente.</p>
+</div>
+
+{% endif %}
+
+{% endblock %}

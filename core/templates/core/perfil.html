@@ -1,0 +1,103 @@
+{% extends 'core/base.html' %}
+{% block title %}Mi Perfil · FlexFit{% endblock %}
+{% block topbar_title %}Mi Perfil{% endblock %}
+{% block nav_perfil %}active{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div><h2>Mi Perfil</h2><p>Gestiona tu información personal</p></div>
+</div>
+
+<div style="display:grid;grid-template-columns:280px 1fr;gap:24px;align-items:start">
+
+  <!-- Tarjeta de perfil -->
+  <div class="card" style="text-align:center">
+    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff">
+      {{ user_obj.nombre|first|upper }}
+    </div>
+    <h3 style="font-size:1.2rem">{{ user_obj.nombre }} {{ user_obj.apellido }}</h3>
+    <div style="color:var(--text2);font-size:13px;margin-top:4px">@{{ user_obj.usuario }}</div>
+    <span class="role-badge {% if user_obj.id_tipo_usuario.rol == 'Admin' %}admin{% elif user_obj.id_tipo_usuario.rol == 'Coach' %}coach{% else %}usuario{% endif %}" style="margin-top:12px;display:inline-block">
+      {{ user_obj.id_tipo_usuario.rol }}
+    </span>
+
+    <div style="margin-top:24px;border-top:1px solid var(--border);padding-top:20px;text-align:left">
+      <div style="display:flex;flex-direction:column;gap:12px">
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Email</div>
+          <div style="font-size:13px;margin-top:2px;word-break:break-all">{{ user_obj.email }}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Género</div>
+          <div style="font-size:13px;margin-top:2px">{{ user_obj.genero|default:"—" }}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Edad</div>
+          <div style="font-size:13px;margin-top:2px">{% if user_obj.edad %}{{ user_obj.edad }} años{% else %}—{% endif %}</div>
+        </div>
+        <div>
+          <div style="font-size:11px;color:var(--text3);text-transform:uppercase;letter-spacing:.08em">Miembro desde</div>
+          <div style="font-size:13px;margin-top:2px">{{ user_obj.fecha_registro }}</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Formulario de edición -->
+  <div class="card">
+    <div class="card-header">
+      <span class="card-title">Editar Información</span>
+    </div>
+    <form method="POST">
+      {% csrf_token %}
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label class="form-label">Nombre</label>
+          <input type="text" name="nombre" class="form-control" value="{{ user_obj.nombre }}">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Apellido</label>
+          <input type="text" name="apellido" class="form-control" value="{{ user_obj.apellido }}">
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Correo Electrónico</label>
+        <input type="email" name="email" class="form-control" value="{{ user_obj.email }}">
+      </div>
+      <div class="form-row cols-2">
+        <div class="form-group">
+          <label class="form-label">Edad</label>
+          <input type="number" name="edad" class="form-control" value="{{ user_obj.edad|default:'' }}" min="1" max="120">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Objetivo</label>
+          <input type="text" name="objetivo" class="form-control" value="{{ user_obj.objetivo|default:'' }}" placeholder="Ej: Perder peso, ganar músculo...">
+        </div>
+      </div>
+
+      <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
+        <div class="card-header" style="margin-bottom:16px">
+          <span style="font-weight:600;font-size:14px">Cambiar Contraseña</span>
+          <span style="font-size:12px;color:var(--text3)">Dejar vacío para no cambiar</span>
+        </div>
+        <div class="form-row cols-2">
+          <div class="form-group">
+            <label class="form-label">Nueva Contraseña</label>
+            <input type="password" name="contrasena" class="form-control" placeholder="••••••••" minlength="6">
+          </div>
+          <div class="form-group">
+            <label class="form-label">Confirmar Contraseña</label>
+            <input type="password" name="contrasena2" class="form-control" placeholder="••••••••">
+          </div>
+        </div>
+      </div>
+
+      <button type="submit" class="btn btn-primary">
+        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+        Guardar Cambios
+      </button>
+    </form>
+  </div>
+
+</div>
+{% endblock %}

@@ -1,0 +1,182 @@
+{% extends 'core/base.html' %}
+{% block title %}Agregar Ejercicio · FlexFit{% endblock %}
+{% block topbar_title %}Agregar Ejercicio a Rutina{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h2>Agregar Ejercicio</h2>
+    <p>Rutina: <strong>{{ rutina.nombre }}</strong></p>
+  </div>
+  <a href="javascript:history.back()" class="btn btn-outline">← Volver</a>
+</div>
+
+<div style="display:grid;grid-template-columns:1fr 1fr;gap:1.5rem;align-items:start">
+
+  <!-- FORMULARIO -->
+  <div class="card" style="padding:1.5rem">
+    <h3 style="font-size:1rem;margin-bottom:1.25rem">Configurar ejercicio</h3>
+    <form method="POST" id="formAgregar">
+      {% csrf_token %}
+
+      <div class="form-group">
+        <label class="form-label">Buscar ejercicio</label>
+        <input type="text" id="buscador" class="form-control" placeholder="Escribe el nombre..." autocomplete="off">
+      </div>
+
+      <div class="form-group">
+        <label class="form-label">Ejercicio <span style="color:#ef4444">*</span></label>
+        <select name="id_ejercicio" id="selectEjercicio" class="form-control" required>
+          <option value="">— Selecciona un ejercicio —</option>
+          {% for e in ejercicios %}
+          <option value="{{ e.id_ejercicio }}"
+                  data-nivel="{{ e.nivel_dificultad }}"
+                  data-tipo="{{ e.tipo_ejercicio.nombre|default:'—' }}"
+                  data-equipo="{{ e.equipo_necesario|default:'Ninguno' }}"
+                  data-instrucciones="{{ e.instrucciones|default:''|truncatechars:200 }}">
+            {{ e.nombre }} — {{ e.nivel_dificultad }}
+          </option>
+          {% endfor %}
+        </select>
+      </div>
+
+      <div id="previewEjercicio"
+style="display:none;
+background:#0f172a;
+border:1px solid #334155;
+border-radius:12px;
+padding:1rem;
+margin-bottom:1rem;
+font-size:.85rem;
+line-height:1.6;
+color:#e2e8f0">
+        <p style="margin:0 0 .3rem"><strong>Tipo:</strong> <span id="prevTipo"></span></p>
+        <p style="margin:0 0 .3rem"><strong>Dificultad:</strong> <span id="prevNivel"></span></p>
+        <p style="margin:0 0 .3rem"><strong>Equipo:</strong> <span id="prevEquipo"></span></p>
+        <p style="margin:0"><strong>Instrucciones:</strong> <span id="prevInstrucciones"></span></p>
+      </div>
+
+      
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label">Series</label>
+          <input type="number" name="series" class="form-control" min="1" placeholder="Ej: 3">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Repeticiones</label>
+          <input type="number" name="repeticiones" class="form-control" min="1" placeholder="Ej: 12">
+        </div>
+      </div>
+
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem">
+        <div class="form-group">
+          <label class="form-label">Descanso</label>
+          <input type="text" name="descanso" class="form-control" placeholder="Ej: 60 seg">
+        </div>
+        <div class="form-group">
+          <label class="form-label">Orden</label>
+          <input type="number" name="orden" class="form-control" min="1" placeholder="Ej: 1">
+        </div>
+      </div>
+
+      <div style="display:flex;gap:.75rem;margin-top:.5rem">
+        <button type="submit" class="btn btn-primary" style="flex:1">Guardar Ejercicio</button>
+        <a href="javascript:history.back()" class="btn btn-outline" style="flex:1;text-align:center">Cancelar</a>
+      </div>
+    </form>
+  </div>
+
+  
+    <!-- CATÁLOGO -->
+<div>
+  <h3 style="font-size:1rem;margin-bottom:1rem;color:var(--text-secondary)">
+    Catálogo — {{ ejercicios|length }} ejercicio(s) disponible(s)
+  </h3>
+
+  <div id="catalogoEjercicios" style="display:flex;flex-direction:column;gap:.6rem;max-height:620px;overflow-y:auto">
+
+    {% for e in ejercicios %}
+    <div class="ejercicio-card card"
+         data-nombre="{{ e.nombre|lower }}"
+         data-id="{{ e.id_ejercicio }}"
+         style="padding:.85rem 1rem;cursor:pointer;transition:box-shadow .15s"
+         onclick="seleccionar(
+           '{{ e.id_ejercicio }}',
+           '{{ e.nivel_dificultad }}',
+           '{{ e.tipo_ejercicio.nombre|default:"-" }}',
+           '{{ e.equipo_necesario|default:"Ninguno" }}',
+           '{{ e.instrucciones|default:""|truncatechars:200 }}'
+         )">
+
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:.3rem">
+        <strong style="font-size:.9rem">{{ e.nombre }}</strong>
+
+        <span style="font-size:.75rem;padding:.15rem .5rem;border-radius:10px;
+          {% if e.nivel_dificultad == 'Alto' %}
+            background:#fee2e2;color:#991b1b
+          {% elif e.nivel_dificultad == 'Medio' %}
+            background:#fef3c7;color:#92400e
+          {% else %}
+            background:#d1fae5;color:#065f46
+          {% endif %}">
+          {{ e.nivel_dificultad }}
+        </span>
+      </div>
+
+      <div style="font-size:.78rem;color:var(--text-secondary)">
+        {{ e.tipo_ejercicio.nombre|default:"Sin tipo" }} ·
+        {{ e.equipo_necesario|default:"Sin equipo"|truncatechars:40 }}
+      </div>
+
+    </div>
+    {% empty %}
+
+    <p style="color:var(--text-secondary);text-align:center;padding:2rem">
+      No hay ejercicios registrados aún.
+    </p>
+
+    {% endfor %}
+  </div>
+</div>
+
+
+</div>
+
+<script>
+document.getElementById('buscador').addEventListener('input', function() {
+  const q = this.value.toLowerCase();
+  document.querySelectorAll('.ejercicio-card').forEach(card => {
+    card.style.display = card.dataset.nombre.includes(q) ? '' : 'none';
+  });
+});
+
+document.getElementById('selectEjercicio').addEventListener('change', function() {
+  const opt = this.options[this.selectedIndex];
+  if (!opt.value) { document.getElementById('previewEjercicio').style.display='none'; return; }
+  mostrarPreview(opt.dataset.nivel, opt.dataset.tipo, opt.dataset.equipo, opt.dataset.instrucciones);
+  resaltar(opt.value);
+});
+
+function seleccionar(id, nivel, tipo, equipo, instrucciones) {
+  document.getElementById('selectEjercicio').value = id;
+  mostrarPreview(nivel, tipo, equipo, instrucciones);
+  resaltar(id);
+  document.getElementById('formAgregar').scrollIntoView({behavior:'smooth', block:'start'});
+}
+
+function mostrarPreview(nivel, tipo, equipo, instrucciones) {
+  document.getElementById('prevNivel').textContent = nivel || '—';
+  document.getElementById('prevTipo').textContent = tipo || '—';
+  document.getElementById('prevEquipo').textContent = equipo || '—';
+  document.getElementById('prevInstrucciones').textContent = instrucciones || '—';
+  document.getElementById('previewEjercicio').style.display = 'block';
+}
+
+function resaltar(id) {
+  document.querySelectorAll('.ejercicio-card').forEach(c => {
+    c.style.boxShadow = c.dataset.id === String(id) ? '0 0 0 2px var(--primary)' : '';
+  });
+}
+</script>
+{% endblock %}

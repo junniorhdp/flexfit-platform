@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block title %}Confirmar Rutina · FlexFit{% endblock %}
+{% block topbar_title %}Confirmar Selección{% endblock %}
+{% block nav_explorar %}active{% endblock %}
+
+{% block content %}
+<div class="confirm-box">
+  <div class="icon" style="background:var(--blue-dim);color:var(--blue-light)">
+    <svg width="28" height="28" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+  </div>
+  <h3>¿Añadir esta rutina?</h3>
+  <p>Se añadirá <strong>{{ rutina.nombre }}</strong> a tu plan activo.</p>
+  {% if rutina.disciplina or rutina.duracion_total %}
+  <div style="display:flex;gap:8px;justify-content:center;margin-bottom:20px">
+    {% if rutina.disciplina %}<span class="badge badge-blue">{{ rutina.disciplina }}</span>{% endif %}
+    {% if rutina.duracion_total %}<span class="badge badge-gray">{{ rutina.duracion_total }}</span>{% endif %}
+  </div>
+  {% endif %}
+  <div class="actions">
+    <form method="POST">
+      {% csrf_token %}
+      <button type="submit" class="btn btn-primary">Sí, añadir</button>
+    </form>
+    <a href="{% url 'usuario_explorar_rutinas' %}" class="btn btn-outline">Cancelar</a>
+  </div>
+</div>
+{% endblock %}

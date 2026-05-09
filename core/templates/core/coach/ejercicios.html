@@ -1,0 +1,78 @@
+{% extends 'core/base.html' %}
+{% block title %}Ejercicios · FlexFit{% endblock %}
+{% block topbar_title %}Ejercicios{% endblock %}
+{% block nav_coach_ejercicios %}active{% endblock %}
+{% block nav_ejercicios %}active{% endblock %}
+{% block nav_usuario_ejercicios %}active{% endblock %}
+
+{% block content %}
+<p style="color:red">ROL ACTUAL: {{ request.session.rol }}</p>
+<div class="page-header">
+  <div>
+    <h2>Ejercicios</h2>
+    <p>Gestiona el catálogo de ejercicios</p>
+  </div>
+
+  {% if request.session.rol == 'Admin' or request.session.rol == 'Coach' %}
+  <a href="{% url 'coach_crear_ejercicio' %}" class="btn btn-primary">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+      <line x1="12" y1="5" x2="12" y2="19"/>
+      <line x1="5" y1="12" x2="19" y2="12"/>
+    </svg>
+    Nuevo Ejercicio
+  </a>
+  {% endif %}
+</div>
+
+<form method="GET" class="search-bar">
+  <div class="search-input-wrap">
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+    <input type="text" name="q" value="{{ q }}" class="form-control" placeholder="Buscar ejercicio...">
+  </div>
+  <button type="submit" class="btn btn-outline">Buscar</button>
+</form>
+
+<div class="table-wrapper">
+  <table>
+    <thead><tr><th>Nombre</th><th>Tipo</th><th>Dificultad</th><th>Equipo</th><th style="text-align:center">Acciones</th><td style="text-align:center"></td></tr></thead>
+    <tbody>
+      {% for e in ejercicios %}
+      <tr>
+        <td><strong>{{ e.nombre }}</strong></td>
+        <td><span class="badge badge-blue">{{ e.tipo_ejercicio.nombre|default:"—" }}</span></td>
+        <td>
+          <span class="badge {% if e.nivel_dificultad == 'Alto' %}badge-red{% elif e.nivel_dificultad == 'Medio' %}badge-yellow{% else %}badge-green{% endif %}">
+            {{ e.nivel_dificultad }}
+          </span>
+        </td>
+        <td style="color:var(--text2)">{{ e.equipo_necesario|default:"—"|truncatechars:40 }}</td>
+        <td>
+  <div class="actions">
+
+  <a href="{% url 'youtube_ejercicio' e.id_ejercicio %}" 
+     class="btn-icon btn-video" title="Ver videos">
+     <i class="fa-solid fa-video"></i>
+  </a>
+
+  {% if request.session.rol == 'Admin' or request.session.rol == 'Coach' %}
+  <a href="{% url 'coach_editar_ejercicio' e.id_ejercicio %}" 
+     class="btn-icon btn-edit" title="Editar">
+     <i class="fa-solid fa-pen"></i>
+  </a>
+
+  <a href="{% url 'coach_eliminar_ejercicio' e.id_ejercicio %}" 
+     class="btn-icon btn-delete" title="Eliminar">
+     <i class="fa-solid fa-trash"></i>
+  </a>
+
+  {% endif %}
+</div>
+</td>
+      </tr>
+      {% empty %}
+      <tr><td colspan="5"><div class="empty-state"><h3>Sin ejercicios</h3><p>Aún no hay ejercicios registrados.</p></div></td></tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+{% endblock %}

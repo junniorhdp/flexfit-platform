@@ -1,0 +1,100 @@
+{% extends 'core/base.html' %}
+{% block title %}Entrenando{% endblock %}
+{% block content %}
+
+<h2>🔥 Rutina en progreso</h2>
+
+<script>
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let cookie of cookies) {
+            cookie = cookie.trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
+const csrftoken = getCookie('csrftoken');
+</script>
+
+<div class="card" style="padding:1.5rem;margin-bottom:1rem">
+    ⏱ Tiempo: <span id="cronometro">00:00</span>
+</div>
+
+{% for e in ejercicios %}
+<div class="card ejercicio" style="padding:1rem;margin-bottom:1rem">
+    <h3>{{ e.id_rutina_ejercicio.id_ejercicio.nombre }}</h3>
+
+    <p>
+        Series: {{ e.id_rutina_ejercicio.series }} |
+        Reps: {{ e.id_rutina_ejercicio.repeticiones }}
+    </p>
+
+    <button onclick="completarEjercicio({{ e.id }}, this)" class="btn btn-success">
+        ✔ Terminé este ejercicio
+    </button>
+</div>
+{% endfor %}
+
+<button onclick="finalizarRutina()" class="btn btn-danger" disabled>
+    🏁 Finalizar rutina
+</button>
+
+<script>
+let segundos = 0;
+let ejerciciosTotales = {{ ejercicios|length }};
+let ejerciciosCompletados = 0;
+
+setInterval(()=>{
+    segundos++
+    let min = String(Math.floor(segundos/60)).padStart(2,'0')
+    let sec = String(segundos%60).padStart(2,'0')
+    document.getElementById('cronometro').innerText = `${min}:${sec}`
+},1000)
+
+function completarEjercicio(id, btn){
+    fetch(`/usuario/completar-ejercicio/${id}/`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        btn.innerText = "✅ Completado"
+        btn.disabled = true
+        btn.classList.remove("btn-success")
+        btn.classList.add("btn-secondary")
+
+        ejerciciosCompletados++
+
+        if(ejerciciosCompletados === ejerciciosTotales){
+            document.querySelector(".btn-danger").disabled = false
+        }
+    })
+}
+
+function finalizarRutina(){
+    fetch(`/usuario/finalizar-rutina/{{ sesion.id_sesion }}/${segundos}/`, {
+        method: 'POST',
+        credentials: 'same-origin',
+        headers: {
+            'X-CSRFToken': csrftoken,
+            'Content-Type': 'application/json'
+        }
+    })
+    .then(res => res.json())
+    .then(data => {
+        window.location.href="/usuario/mi-rutina/"
+    })
+}
+</script>
+
+{% endblock %}

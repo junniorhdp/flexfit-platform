@@ -1,0 +1,621 @@
+:root{
+--bg:#0f172a;
+--bg2:#111827;
+--card:#1e293b;
+--border:#334155;
+--text:#f8fafc;
+--text2:#94a3b8;
+--blue:#3b82f6;
+--blue-light:#60a5fa;
+--blue-dim:rgba(59,130,246,.12);
+--success:#10b981;
+--warning:#f59e0b;
+--danger:#ef4444;
+--cyan:#06b6d4;
+}
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+font-family:Segoe UI, sans-serif;
+}
+
+body{
+background:var(--bg);
+color:var(--text);
+}
+
+a{
+text-decoration:none;
+color:inherit;
+}
+
+.app-wrapper{
+display:flex;
+min-height:100vh;
+}
+
+/* SIDEBAR */
+
+.sidebar{
+width:270px;
+background:var(--bg2);
+border-right:1px solid var(--border);
+padding:22px;
+display:flex;
+flex-direction:column;
+}
+
+.sidebar-logo{
+font-size:24px;
+font-weight:800;
+color:var(--blue);
+margin-bottom:30px;
+}
+
+.tagline{
+font-size:12px;
+color:var(--text2);
+margin-top:4px;
+}
+
+.sidebar-user{
+display:flex;
+gap:12px;
+align-items:center;
+margin-bottom:28px;
+}
+
+.avatar{
+width:42px;
+height:42px;
+border-radius:50%;
+background:var(--blue);
+display:flex;
+align-items:center;
+justify-content:center;
+font-weight:bold;
+}
+
+.name{
+font-size:14px;
+font-weight:700;
+}
+
+.role-badge{
+font-size:11px;
+padding:3px 8px;
+border-radius:20px;
+background:var(--blue-dim);
+color:var(--blue-light);
+}
+
+.nav-section{
+display:block;
+font-size:11px;
+color:var(--text2);
+margin:18px 0 8px;
+text-transform:uppercase;
+}
+
+.nav-item{
+display:flex;
+align-items:center;
+gap:10px;
+padding:12px;
+border-radius:10px;
+margin-bottom:6px;
+color:var(--text2);
+transition:.2s;
+}
+
+.nav-item:hover,
+.nav-item.active{
+background:var(--blue-dim);
+color:white;
+}
+
+.sidebar-footer{
+margin-top:auto;
+}
+
+.btn-logout{
+display:flex;
+gap:10px;
+padding:12px;
+border-radius:10px;
+background:#ef444420;
+color:#f87171;
+}
+
+/* MAIN */
+
+.main-content{
+flex:1;
+padding:28px;
+}
+
+.topbar{
+display:flex;
+align-items:center;
+margin-bottom:24px;
+}
+
+.topbar-title{
+font-size:24px;
+font-weight:800;
+}
+
+.topbar-spacer{
+flex:1;
+}
+
+.page-body{
+display:flex;
+flex-direction:column;
+gap:24px;
+}
+
+/* CARDS */
+
+.card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:22px;
+}
+
+.card-header{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:16px;
+}
+
+.card-title{
+font-weight:700;
+font-size:18px;
+}
+
+/* BUTTONS */
+
+.btn{
+padding:10px 16px;
+border-radius:10px;
+display:inline-flex;
+align-items:center;
+gap:8px;
+font-weight:600;
+cursor:pointer;
+border:none;
+}
+
+.btn-primary{
+background:var(--blue);
+color:white;
+}
+
+.btn-outline{
+border:1px solid var(--border);
+background:transparent;
+color:white;
+}
+
+.btn-sm{
+padding:8px 12px;
+font-size:13px;
+}
+
+/* STATS */
+
+.stats-grid{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:18px;
+}
+
+.stat-card{
+background:var(--card);
+border:1px solid var(--border);
+border-radius:18px;
+padding:20px;
+}
+
+.stat-icon{
+width:48px;
+height:48px;
+border-radius:14px;
+display:flex;
+align-items:center;
+justify-content:center;
+background:var(--blue-dim);
+color:var(--blue-light);
+margin-bottom:14px;
+}
+
+.stat-value{
+font-size:28px;
+font-weight:800;
+}
+
+.stat-label{
+color:var(--text2);
+font-size:14px;
+margin-top:4px;
+}
+
+/* TABLE */
+
+table{
+width:100%;
+border-collapse:collapse;
+}
+
+th,td{
+padding:14px;
+text-align:left;
+border-bottom:1px solid var(--border);
+}
+
+th{
+color:var(--text2);
+font-size:13px;
+}
+
+/* FORMS */
+
+.form-group{
+margin-bottom:18px;
+}
+
+.form-label{
+display:block;
+margin-bottom:8px;
+font-size:14px;
+}
+
+.form-control{
+width:100%;
+padding:12px;
+border-radius:10px;
+border:1px solid var(--border);
+background:#0f172a;
+color:white;
+}
+
+textarea.form-control{
+min-height:120px;
+resize:vertical;
+}
+
+.form-row.cols-2{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:18px;
+}
+
+.video-group{
+display:grid;
+gap:12px;
+}
+
+/* BADGES */
+
+.badge{
+padding:4px 10px;
+border-radius:20px;
+font-size:12px;
+font-weight:600;
+}
+
+.badge-green{background:#10b98122;color:#34d399;}
+.badge-blue{background:#3b82f622;color:#60a5fa;}
+.badge-red{background:#ef444422;color:#f87171;}
+
+/* ALERTS */
+
+.alert{
+padding:14px;
+border-radius:12px;
+margin-bottom:14px;
+}
+
+.alert-success{background:#10b98122;color:#34d399;}
+.alert-error{background:#ef444422;color:#f87171;}
+.alert-warning{background:#f59e0b22;color:#fbbf24;}
+
+/* TUS BOTONES DE EJERCICIOS */
+
+.actions{
+display:flex;
+justify-content:center;
+gap:10px;
+}
+
+.btn-icon{
+width:36px;
+height:36px;
+display:flex;
+align-items:center;
+justify-content:center;
+border-radius:12px;
+font-size:15px;
+transition:.25s;
+background:#111827;
+border:1px solid #1f2937;
+}
+
+.btn-video{color:#60a5fa;}
+.btn-video:hover{background:#2563eb;color:white;}
+
+.btn-edit{color:#facc15;}
+.btn-edit:hover{background:#eab308;color:black;}
+
+.btn-delete{color:#f87171;}
+.btn-delete:hover{background:#ef4444;color:white;}
+
+/* ===================================================
+   LOGIN / REGISTRO FLEXFIT
+=================================================== */
+
+.auth-page{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
+padding:30px;
+background:
+radial-gradient(circle at top right,#1d4ed8 0%,transparent 30%),
+radial-gradient(circle at bottom left,#0ea5e9 0%,transparent 25%),
+linear-gradient(135deg,#0f172a,#111827,#020617);
+}
+
+.auth-container{
+width:100%;
+max-width:1180px;
+min-height:720px;
+display:grid;
+grid-template-columns:1fr 1fr;
+background:rgba(15,23,42,.75);
+backdrop-filter:blur(16px);
+border:1px solid rgba(255,255,255,.08);
+border-radius:28px;
+overflow:hidden;
+box-shadow:0 30px 60px rgba(0,0,0,.45);
+}
+
+/* PANEL IZQUIERDO */
+
+.auth-left{
+padding:60px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+background:
+linear-gradient(160deg,rgba(59,130,246,.18),rgba(6,182,212,.08));
+border-right:1px solid rgba(255,255,255,.05);
+}
+
+.brand{
+font-size:46px;
+font-weight:900;
+letter-spacing:2px;
+color:white;
+margin-bottom:10px;
+}
+
+.brand-sub{
+font-size:17px;
+color:#cbd5e1;
+margin-bottom:38px;
+line-height:1.5;
+}
+
+.features{
+display:flex;
+flex-direction:column;
+gap:18px;
+}
+
+.auth-feature{
+display:flex;
+align-items:center;
+gap:14px;
+font-size:15px;
+color:#e2e8f0;
+padding:14px 16px;
+border-radius:14px;
+background:rgba(255,255,255,.03);
+border:1px solid rgba(255,255,255,.04);
+}
+
+.dot{
+width:10px;
+height:10px;
+border-radius:50%;
+background:#3b82f6;
+box-shadow:0 0 10px #3b82f6;
+flex-shrink:0;
+}
+
+/* PANEL DERECHO */
+
+.auth-right{
+padding:55px;
+display:flex;
+flex-direction:column;
+justify-content:center;
+background:rgba(15,23,42,.45);
+}
+
+.auth-right h2{
+font-size:34px;
+font-weight:800;
+margin-bottom:8px;
+}
+
+.sub{
+color:#94a3b8;
+margin-bottom:28px;
+font-size:15px;
+}
+
+/* TABS */
+
+.auth-tabs{
+display:flex;
+gap:10px;
+margin-bottom:28px;
+}
+
+.auth-tab{
+flex:1;
+padding:13px;
+border:none;
+border-radius:12px;
+cursor:pointer;
+font-weight:700;
+font-size:14px;
+background:#1e293b;
+color:#94a3b8;
+transition:.25s;
+text-align:center;
+}
+
+.auth-tab:hover{
+color:white;
+}
+
+.auth-tab.active{
+background:linear-gradient(135deg,#2563eb,#3b82f6);
+color:white;
+box-shadow:0 10px 20px rgba(37,99,235,.35);
+}
+
+/* FORMULARIO */
+
+.tab-content{
+display:none;
+}
+
+.tab-content.active{
+display:block;
+}
+
+.auth-right .form-group{
+margin-bottom:18px;
+}
+
+.auth-right .form-control{
+height:50px;
+font-size:15px;
+}
+
+.auth-right select.form-control{
+cursor:pointer;
+}
+
+.auth-right .btn{
+height:52px;
+font-size:15px;
+margin-top:8px;
+}
+
+/* ALERTAS */
+
+.auth-right .alert{
+margin-bottom:18px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:980px){
+
+.auth-container{
+grid-template-columns:1fr;
+max-width:620px;
+}
+
+.auth-left{
+display:none;
+}
+
+.auth-right{
+padding:35px;
+}
+
+}
+
+@media(max-width:520px){
+
+.auth-page{
+padding:14px;
+}
+
+.auth-right{
+padding:22px;
+}
+
+.auth-right h2{
+font-size:28px;
+}
+
+.form-row.cols-2{
+grid-template-columns:1fr;
+}
+
+}
+
+/* ─────────────────────────────
+   NOTIFICACIÓN TIPO INSTAGRAM
+───────────────────────────── */
+
+.topbar-notif{
+  position:relative;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  width:42px;
+  height:42px;
+  border-radius:50%;
+  background:var(--card);
+  border:1px solid var(--border);
+  color:var(--text);
+  transition:.25s;
+}
+
+.topbar-notif:hover{
+  transform:translateY(-2px);
+  background:var(--bg2);
+}
+
+.notif-dot{
+  position:absolute;
+  top:8px;
+  right:8px;
+  width:10px;
+  height:10px;
+  border-radius:50%;
+  background:#ff3b30;
+  border:2px solid var(--card);
+  animation:notifPulse 1.6s infinite;
+}
+
+/* Animación moderna */
+@keyframes notifPulse{
+  0%{
+    transform:scale(1);
+    opacity:1;
+  }
+
+  50%{
+    transform:scale(1.25);
+    opacity:.75;
+  }
+
+  100%{
+    transform:scale(1);
+    opacity:1;
+  }
+}
