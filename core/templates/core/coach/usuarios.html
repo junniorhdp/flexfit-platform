@@ -4,40 +4,425 @@
 {% block nav_coach_usuarios %}active{% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <div><h2>Mis Usuarios</h2><p>Usuarios con rutinas asignadas actualmente</p></div>
+
+<div class="users-header">
+
+    <div>
+        <span class="users-badge">
+            GESTIÓN DE USUARIOS
+        </span>
+
+        <h1>👥 Mis Usuarios</h1>
+
+        <p>
+            Usuarios que actualmente tienen rutinas asignadas.
+        </p>
+    </div>
+
+    <div class="users-counter">
+        {{ asignaciones|length }}
+    </div>
+
 </div>
 
-<div class="table-wrapper">
-  <table>
-    <thead><tr><th>Usuario</th><th>Email</th><th>Rutina Asignada</th><th>Estado</th><th>Inicio</th><th>Fin</th></tr></thead>
-    <tbody>
-      {% for a in asignaciones %}
-      <tr>
-        <td>
-          <div style="font-weight:600">{{ a.id_usuario.nombre }} {{ a.id_usuario.apellido }}</div>
-          <div style="font-size:12px;color:var(--text3)">@{{ a.id_usuario.usuario }}</div>
-        </td>
-        <td style="color:var(--text2)">{{ a.id_usuario.email }}</td>
-        <td><strong>{{ a.id_rutina.nombre }}</strong></td>
-        <td>
-          <span class="badge {% if a.estado == 'Activa' %}badge-green{% elif a.estado == 'Pausada' %}badge-yellow{% else %}badge-gray{% endif %}">
-            {{ a.estado }}
-          </span>
-        </td>
-        <td style="color:var(--text2)">{{ a.fecha_inicio|default:"—" }}</td>
-        <td style="color:var(--text2)">{{ a.fecha_final|default:"—" }}</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="6">
-        <div class="empty-state">
-          <svg width="40" height="40" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
-          <h3>Sin asignaciones</h3>
-          <p>Aún no has asignado rutinas a ningún usuario. <a href="{% url 'coach_rutinas' %}">Ir a Rutinas</a></p>
+{% if asignaciones %}
+
+<div class="users-grid">
+
+{% for a in asignaciones %}
+
+<div class="user-card">
+
+    <div class="user-top">
+
+        <div class="user-avatar">
+            {{ a.id_usuario.nombre|first|upper }}
         </div>
-      </td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+        <span class="status
+            {% if a.estado == 'Activa' %}
+                status-active
+            {% elif a.estado == 'Pausada' %}
+                status-pause
+            {% else %}
+                status-finish
+            {% endif %}
+        ">
+            {{ a.estado }}
+        </span>
+
+    </div>
+
+    <h3>
+        {{ a.id_usuario.nombre }}
+        {{ a.id_usuario.apellido }}
+    </h3>
+
+    <div class="username">
+        @{{ a.id_usuario.usuario }}
+    </div>
+
+    <div class="email">
+        {{ a.id_usuario.email }}
+    </div>
+
+    <div class="routine-box">
+
+        <span>Rutina asignada</span>
+
+        <strong>
+            {{ a.id_rutina.nombre }}
+        </strong>
+
+    </div>
+
+    <div class="dates">
+
+        <div>
+            <small>Inicio</small>
+            <strong>{{ a.fecha_inicio|default:"—" }}</strong>
+        </div>
+
+        <div>
+            <small>Fin</small>
+            <strong>{{ a.fecha_final|default:"—" }}</strong>
+        </div>
+
+    </div>
+
+    
+
+
+<div class="user-actions">
+
+    <a href="{% url 'editar_asignacion_rutina' a.id_asignacion %}"
+       class="btn-edit">
+        ✏️ Gestionar Asignación
+    </a>
+
 </div>
+   
+</div>
+
+{% endfor %}
+
+</div>
+
+{% else %}
+
+<div class="empty-users">
+
+    <div class="empty-icon">
+        👥
+    </div>
+
+    <h2>Sin usuarios asignados</h2>
+
+    <p>
+        Todavía no has asignado rutinas.
+    </p>
+
+    <a href="{% url 'coach_rutinas' %}" class="empty-btn">
+        Ver Rutinas
+    </a>
+
+</div>
+
+{% endif %}
+
+<style>
+
+.user-actions{
+    margin-top:18px;
+}
+.btn-edit{
+    display:block;
+    width:100%;
+    text-align:center;
+    text-decoration:none;
+    padding:14px;
+    border-radius:14px;
+    font-weight:700;
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+
+    transition:.3s;
+}
+
+.btn-edit:hover{
+    transform:translateY(-2px);
+}
+
+
+.btn-view,
+.btn-remove{
+
+    flex:1;
+    text-align:center;
+    text-decoration:none;
+    padding:12px;
+    border-radius:14px;
+    font-weight:600;
+    transition:.3s;
+
+}
+
+.btn-view{
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e6bff,
+            #4f8dff
+        );
+
+    color:white;
+
+}
+
+.btn-remove{
+
+    background:
+        rgba(239,68,68,.15);
+
+    color:#ef4444;
+
+}
+
+.btn-view:hover,
+.btn-remove:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.users-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:35px;
+}
+
+.users-badge{
+    color:#22c55e;
+    font-size:.8rem;
+    font-weight:700;
+    letter-spacing:2px;
+}
+
+.users-header h1{
+    margin:10px 0;
+    font-size:2.7rem;
+    font-weight:800;
+}
+
+.users-header p{
+    color:var(--text2);
+}
+
+.users-counter{
+    width:90px;
+    height:90px;
+    border-radius:24px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:2rem;
+    font-weight:800;
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+
+    box-shadow:
+        0 20px 40px rgba(30,107,255,.25);
+}
+
+.users-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(auto-fill,minmax(350px,1fr));
+    gap:24px;
+}
+
+.user-card{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.06);
+    border-radius:28px;
+    padding:24px;
+    backdrop-filter:blur(15px);
+    transition:.3s;
+}
+
+.user-card:hover{
+    transform:translateY(-6px);
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.18);
+}
+
+.user-top{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:18px;
+}
+
+.user-avatar{
+    width:60px;
+    height:60px;
+    border-radius:18px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:1.4rem;
+    font-weight:800;
+    color:white;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+}
+
+.user-card h3{
+    margin-bottom:6px;
+    font-size:1.2rem;
+}
+
+.username{
+    color:#60a5fa;
+    font-weight:600;
+    margin-bottom:8px;
+}
+
+.email{
+    color:#9ca3af;
+    margin-bottom:20px;
+    word-break:break-word;
+}
+
+.status{
+    padding:8px 14px;
+    border-radius:999px;
+    font-size:.8rem;
+    font-weight:700;
+}
+
+.status-active{
+    background:rgba(34,197,94,.15);
+    color:#22c55e;
+}
+
+.status-pause{
+    background:rgba(234,179,8,.15);
+    color:#facc15;
+}
+
+.status-finish{
+    background:rgba(107,114,128,.15);
+    color:#9ca3af;
+}
+
+.routine-box{
+    padding:15px;
+    border-radius:16px;
+    background:rgba(255,255,255,.04);
+    margin-bottom:18px;
+}
+
+.routine-box span{
+    display:block;
+    font-size:.8rem;
+    color:#9ca3af;
+    margin-bottom:6px;
+}
+
+.routine-box strong{
+    color:white;
+}
+
+.dates{
+    display:flex;
+    gap:15px;
+}
+
+.dates > div{
+    flex:1;
+    padding:12px;
+    border-radius:14px;
+    background:rgba(255,255,255,.03);
+}
+
+.dates small{
+    display:block;
+    color:#9ca3af;
+    margin-bottom:5px;
+}
+
+.empty-users{
+    text-align:center;
+    padding:80px 30px;
+    border-radius:30px;
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.05);
+}
+
+.empty-icon{
+    font-size:5rem;
+    margin-bottom:20px;
+}
+
+.empty-users h2{
+    margin-bottom:10px;
+}
+
+.empty-users p{
+    color:#9ca3af;
+    margin-bottom:25px;
+}
+
+.empty-btn{
+    display:inline-block;
+    padding:14px 24px;
+    border-radius:14px;
+    text-decoration:none;
+    color:white;
+    font-weight:600;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+}
+
+@media(max-width:768px){
+
+    .users-header{
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+    }
+
+    .users-grid{
+        grid-template-columns:1fr;
+    }
+
+    .dates{
+        flex-direction:column;
+    }
+
+}
+
+</style>
+
 {% endblock %}

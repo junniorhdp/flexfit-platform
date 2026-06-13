@@ -11,25 +11,250 @@
     Nuevo Tipo
   </a>
 </div>
-<div class="table-wrapper">
-  <table>
-    <thead><tr><th>#</th><th>Nombre</th><th>Acciones</th></tr></thead>
-    <tbody>
-      {% for t in tipos %}
-      <tr>
-        <td style="color:var(--text3)">{{ t.id_tipo }}</td>
-        <td><strong>{{ t.nombre }}</strong></td>
-        <td>
-          <div style="display:flex;gap:8px">
-            <a href="{% url 'coach_editar_tipo_ejercicio' t.id_tipo %}" class="btn btn-outline btn-sm">Editar</a>
-            <a href="{% url 'coach_eliminar_tipo_ejercicio' t.id_tipo %}" class="btn btn-danger btn-sm">Eliminar</a>
-          </div>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3"><div class="empty-state"><h3>Sin tipos</h3></div></td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="tipos-grid">
+
+{% for t in tipos %}
+
+<div class="tipo-card">
+
+    <div class="tipo-icon">
+        🏋️
+    </div>
+
+    <div class="tipo-info">
+
+        <span class="tipo-id">
+            Tipo #{{ t.id_tipo }}
+        </span>
+
+        <h3>
+            {{ t.nombre }}
+        </h3>
+
+        <p>
+            Categoría utilizada para clasificar ejercicios dentro de las rutinas.
+        </p>
+
+    </div>
+
+    <div class="tipo-actions">
+
+        <a href="{% url 'coach_editar_tipo_ejercicio' t.id_tipo %}"
+           class="btn-edit">
+            ✏ Editar
+        </a>
+
+        <a href="{% url 'coach_eliminar_tipo_ejercicio' t.id_tipo %}"
+           class="btn-delete">
+            🗑 Eliminar
+        </a>
+
+    </div>
+
 </div>
+
+{% empty %}
+
+<div class="empty-state-modern">
+
+    <div class="empty-icon">
+        🏋️
+    </div>
+
+    <h3>No hay tipos de ejercicio</h3>
+
+    <p>
+        Crea tu primera categoría para organizar los ejercicios.
+    </p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<style>
+
+.tipos-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(320px,1fr));
+
+    gap:24px;
+
+}
+
+.tipo-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:18px;
+
+    padding:24px;
+
+    border-radius:24px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    transition:.3s;
+
+    backdrop-filter:blur(14px);
+
+}
+
+.tipo-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:
+        rgba(30,107,255,.25);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.2);
+
+}
+
+.tipo-icon{
+
+    width:70px;
+    height:70px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:20px;
+
+    font-size:2rem;
+
+    background:
+        rgba(30,107,255,.12);
+
+}
+
+.tipo-id{
+
+    display:block;
+
+    margin-bottom:8px;
+
+    color:var(--text3);
+
+    font-size:.85rem;
+
+}
+
+.tipo-info h3{
+
+    margin:0;
+
+    font-size:1.3rem;
+
+}
+
+.tipo-info p{
+
+    margin-top:10px;
+
+    color:var(--text3);
+
+    line-height:1.6;
+
+}
+
+.tipo-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:auto;
+
+}
+
+.btn-edit{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    color:white;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+.btn-delete{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    color:#ef4444;
+
+    background:
+        rgba(239,68,68,.12);
+
+}
+
+.btn-edit:hover,
+.btn-delete:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.empty-state-modern{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:80px 20px;
+
+    border-radius:24px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.05);
+
+}
+
+.empty-icon{
+
+    font-size:4rem;
+
+    margin-bottom:15px;
+
+}
+
+</style>
 {% endblock %}

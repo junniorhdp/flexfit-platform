@@ -1,0 +1,181 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Planificación · FlexFit{% endblock %}
+{% block topbar_title %}Planificación{% endblock %}
+
+{% block content %}
+
+<div class="page-header">
+
+    <div>
+        <h1>{{ rutina.nombre }}</h1>
+        <p>Organiza los ejercicios por día.</p>
+    </div>
+
+    <a href="{% url 'ver_rutina' rutina.id_rutina %}"
+       class="btn-back">
+        ← Volver a la rutina
+    </a>
+
+</div>
+
+<div class="days-grid">
+
+{% for dia, ejercicios in dias.items %}
+
+<div class="day-card">
+
+    <div class="day-header">
+        {{ dia }}
+    </div>
+
+    {% if ejercicios %}
+
+        {% for ejercicio in ejercicios %}
+
+        <div class="exercise-card">
+
+            <div class="exercise-info">
+
+                <strong>
+                    {{ ejercicio.id_ejercicio.nombre }}
+                </strong>
+
+                <small>
+                    {{ ejercicio.series|default:"-" }} series ·
+                    {{ ejercicio.repeticiones|default:"-" }} reps
+                </small>
+
+            </div>
+
+            <form method="post"
+                  action="{% url 'mover_ejercicio_dia' ejercicio.id_rutina_ejercicio %}">
+
+                {% csrf_token %}
+
+                <select name="dia_semana">
+
+                    <option value="Lunes">Lunes</option>
+                    <option value="Martes">Martes</option>
+                    <option value="Miércoles">Miércoles</option>
+                    <option value="Jueves">Jueves</option>
+                    <option value="Viernes">Viernes</option>
+                    <option value="Sábado">Sábado</option>
+                    <option value="Domingo">Domingo</option>
+
+                </select>
+
+                <button type="submit">
+                    Mover
+                </button>
+
+            </form>
+
+        </div>
+
+        {% endfor %}
+
+    {% else %}
+
+        <div class="empty-day">
+            Sin ejercicios
+        </div>
+
+    {% endif %}
+
+</div>
+
+{% endfor %}
+
+</div>
+
+<style>
+
+.page-header{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:30px;
+}
+
+.page-header h1{
+    margin-bottom:8px;
+}
+
+.page-header p{
+    color:#9ca3af;
+}
+
+.btn-back{
+    padding:12px 18px;
+    border-radius:14px;
+    text-decoration:none;
+    color:white;
+    background:#2563eb;
+}
+
+.days-grid{
+    display:grid;
+    grid-template-columns:
+        repeat(auto-fit,minmax(300px,1fr));
+    gap:20px;
+}
+
+.day-card{
+    background:rgba(255,255,255,.03);
+    border:1px solid rgba(255,255,255,.08);
+    border-radius:22px;
+    padding:20px;
+}
+
+.day-header{
+    font-size:1.2rem;
+    font-weight:700;
+    margin-bottom:15px;
+    color:#60a5fa;
+}
+
+.exercise-card{
+    background:rgba(255,255,255,.04);
+    border-radius:14px;
+    padding:14px;
+    margin-bottom:12px;
+}
+
+.exercise-info{
+    margin-bottom:10px;
+}
+
+.exercise-info small{
+    display:block;
+    margin-top:4px;
+    color:#9ca3af;
+}
+
+.exercise-card form{
+    display:flex;
+    gap:8px;
+}
+
+.exercise-card select{
+    flex:1;
+    padding:10px;
+    border-radius:10px;
+}
+
+.exercise-card button{
+    padding:10px 14px;
+    border:none;
+    border-radius:10px;
+    cursor:pointer;
+}
+
+.empty-day{
+    color:#9ca3af;
+    text-align:center;
+    padding:15px;
+}
+
+</style>
+
+{% endblock %}

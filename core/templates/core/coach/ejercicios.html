@@ -6,10 +6,10 @@
 {% block nav_usuario_ejercicios %}active{% endblock %}
 
 {% block content %}
-<p style="color:red">ROL ACTUAL: {{ request.session.rol }}</p>
+
 <div class="page-header">
   <div>
-    <h2>Ejercicios</h2>
+    <h2>Biblioteca de movimientos y entrenamientos disponibles</h2>
     <p>Gestiona el catálogo de ejercicios</p>
   </div>
 
@@ -32,47 +32,407 @@
   <button type="submit" class="btn btn-outline">Buscar</button>
 </form>
 
-<div class="table-wrapper">
-  <table>
-    <thead><tr><th>Nombre</th><th>Tipo</th><th>Dificultad</th><th>Equipo</th><th style="text-align:center">Acciones</th><td style="text-align:center"></td></tr></thead>
-    <tbody>
-      {% for e in ejercicios %}
-      <tr>
-        <td><strong>{{ e.nombre }}</strong></td>
-        <td><span class="badge badge-blue">{{ e.tipo_ejercicio.nombre|default:"—" }}</span></td>
-        <td>
-          <span class="badge {% if e.nivel_dificultad == 'Alto' %}badge-red{% elif e.nivel_dificultad == 'Medio' %}badge-yellow{% else %}badge-green{% endif %}">
+<div class="exercise-grid">
+
+{% for e in ejercicios %}
+
+<div class="exercise-card">
+
+    <div class="card-glow"></div>
+
+    <div class="exercise-top">
+
+        <div class="exercise-icon">
+
+            {% if e.nivel_dificultad == 'Alto' %}
+                🔥
+            {% elif e.nivel_dificultad == 'Medio' %}
+                ⚡
+            {% else %}
+                💪
+            {% endif %}
+
+        </div>
+
+        <span class="difficulty
+            {% if e.nivel_dificultad == 'Alto' %}
+                diff-hard
+            {% elif e.nivel_dificultad == 'Medio' %}
+                diff-medium
+            {% else %}
+                diff-easy
+            {% endif %}
+        ">
             {{ e.nivel_dificultad }}
-          </span>
-        </td>
-        <td style="color:var(--text2)">{{ e.equipo_necesario|default:"—"|truncatechars:40 }}</td>
-        <td>
-  <div class="actions">
+        </span>
 
-  <a href="{% url 'youtube_ejercicio' e.id_ejercicio %}" 
-     class="btn-icon btn-video" title="Ver videos">
-     <i class="fa-solid fa-video"></i>
-  </a>
+    </div>
 
-  {% if request.session.rol == 'Admin' or request.session.rol == 'Coach' %}
-  <a href="{% url 'coach_editar_ejercicio' e.id_ejercicio %}" 
-     class="btn-icon btn-edit" title="Editar">
-     <i class="fa-solid fa-pen"></i>
-  </a>
+    <h3>{{ e.nombre }}</h3>
 
-  <a href="{% url 'coach_eliminar_ejercicio' e.id_ejercicio %}" 
-     class="btn-icon btn-delete" title="Eliminar">
-     <i class="fa-solid fa-trash"></i>
-  </a>
+    <div class="exercise-type">
+        {{ e.tipo_ejercicio.nombre|default:"General" }}
+    </div>
 
-  {% endif %}
+    <div class="exercise-equipment">
+        <span>🏋️</span>
+        {{ e.equipo_necesario|default:"Sin equipamiento"|truncatechars:60 }}
+    </div>
+
+    <div class="exercise-actions">
+
+        <a href="{% url 'youtube_ejercicio' e.id_ejercicio %}"
+           class="btn-video">
+            📹 Videos
+        </a>
+
+        {% if request.session.rol == 'Admin' or request.session.rol == 'Coach' %}
+
+        <a href="{% url 'coach_editar_ejercicio' e.id_ejercicio %}"
+           class="btn-edit">
+            ✏
+        </a>
+
+        <a href="{% url 'coach_eliminar_ejercicio' e.id_ejercicio %}"
+           class="btn-delete">
+            🗑
+        </a>
+
+        {% endif %}
+
+    </div>
+
 </div>
-</td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="5"><div class="empty-state"><h3>Sin ejercicios</h3><p>Aún no hay ejercicios registrados.</p></div></td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+
+{% empty %}
+
+<div class="empty-state-modern">
+
+    <div class="empty-icon">
+        💪
+    </div>
+
+    <h3>Sin ejercicios registrados</h3>
+
+    <p>
+        Aún no existen ejercicios en el catálogo.
+    </p>
+
 </div>
+
+{% endfor %}
+
+</div>
+
+<style>
+
+.exercise-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(330px,1fr));
+
+    gap:24px;
+
+}
+
+.exercise-card{
+
+    position:relative;
+
+    overflow:hidden;
+
+    display:flex;
+
+    flex-direction:column;
+
+    background:
+        linear-gradient(
+            180deg,
+            rgba(255,255,255,.04),
+            rgba(255,255,255,.02)
+        );
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    border-radius:28px;
+
+    padding:24px;
+
+    transition:.35s;
+
+    backdrop-filter:blur(16px);
+
+}
+
+.exercise-card:hover{
+
+    transform:translateY(-8px);
+
+    box-shadow:
+        0 25px 50px rgba(0,0,0,.25);
+
+    border-color:
+        rgba(30,107,255,.25);
+
+}
+
+.card-glow{
+
+    position:absolute;
+
+    top:0;
+    left:0;
+
+    width:100%;
+    height:4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #22c55e,
+            #1e6bff
+        );
+
+}
+
+.exercise-top{
+
+    display:flex;
+
+    justify-content:space-between;
+
+    align-items:center;
+
+    margin-bottom:18px;
+
+}
+
+.exercise-icon{
+
+    width:60px;
+    height:60px;
+
+    border-radius:18px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:1.8rem;
+
+    background:
+        rgba(255,255,255,.05);
+
+}
+
+.exercise-card h3{
+
+    font-size:1.35rem;
+
+    margin-bottom:14px;
+
+    font-weight:700;
+
+}
+
+.exercise-type{
+
+    display:inline-block;
+
+    width:fit-content;
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    background:
+        rgba(30,107,255,.12);
+
+    color:#60a5fa;
+
+    font-size:.85rem;
+
+    font-weight:700;
+
+    margin-bottom:18px;
+
+}
+
+.exercise-equipment{
+
+    display:flex;
+
+    gap:10px;
+
+    align-items:flex-start;
+
+    color:#9ca3af;
+
+    margin-bottom:24px;
+
+    min-height:50px;
+
+    line-height:1.6;
+
+}
+
+.difficulty{
+
+    padding:8px 14px;
+
+    border-radius:999px;
+
+    font-size:.8rem;
+
+    font-weight:700;
+
+}
+
+.diff-easy{
+
+    background:
+        rgba(34,197,94,.15);
+
+    color:#22c55e;
+
+}
+
+.diff-medium{
+
+    background:
+        rgba(234,179,8,.15);
+
+    color:#facc15;
+
+}
+
+.diff-hard{
+
+    background:
+        rgba(239,68,68,.15);
+
+    color:#ef4444;
+
+}
+
+.exercise-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:auto;
+
+}
+
+.btn-video,
+.btn-edit,
+.btn-delete{
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    text-decoration:none;
+
+    border-radius:14px;
+
+    font-weight:700;
+
+    transition:.25s;
+
+}
+
+.btn-video{
+
+    flex:1;
+
+    padding:12px;
+
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #1e6bff,
+            #4f8dff
+        );
+
+}
+
+.btn-edit{
+
+    width:50px;
+
+    color:white;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+.btn-delete{
+
+    width:50px;
+
+    color:#ef4444;
+
+    background:
+        rgba(239,68,68,.12);
+
+}
+
+.btn-video:hover,
+.btn-edit:hover,
+.btn-delete:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.empty-state-modern{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:80px 20px;
+
+    border-radius:30px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.05);
+
+}
+
+.empty-icon{
+
+    font-size:4rem;
+
+    margin-bottom:15px;
+
+}
+
+.empty-state-modern h3{
+
+    margin-bottom:10px;
+
+}
+
+.empty-state-modern p{
+
+    color:#9ca3af;
+
+}
+
+</style>
 {% endblock %}

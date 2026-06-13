@@ -17,13 +17,30 @@
   <!-- ── SIDEBAR ─────────────────────────────────────── -->
   <aside class="sidebar">
     <div class="sidebar-logo">
-      <span>FLEXFIT</span>
-      <div class="tagline">Performance Tracker</div>
+    <span>🏋️ FLEXFIT</span>
+    <div class="tagline">
+        Performance & Training Platform
     </div>
+</div>
 
     <div class="sidebar-user">
-      <div class="avatar">{{ request.session.nombre|first|upper }}</div>
+
+
+
+<div class="avatar">
+    {% if usuario_actual and usuario_actual.foto_perfil %}
+        <img 
+            src="/media/{{ usuario_actual.foto_perfil }}" 
+            alt="Foto de perfil"
+            loading="lazy"
+        >
+    {% else %}
+        <span>{{ request.session.nombre|first|upper|default:"U" }}</span>
+    {% endif %}
+</div>
+
       <div class="user-info">
+
         <div class="name">{{ request.session.nombre }}</div>
         <span class="role-badge {% if request.session.rol == 'Admin' %}admin{% elif request.session.rol == 'Coach' %}coach{% else %}usuario{% endif %}">
           {{ request.session.rol }}

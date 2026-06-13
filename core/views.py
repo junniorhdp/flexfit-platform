@@ -10,10 +10,15 @@ from django.views.decorators.http import require_POST
 from .logros import verificar_logros
 from django.db.models import Count, Sum
 from .models import SesionEntrenamiento, EjercicioSesion, UsuarioLogro
-
+from django.contrib.auth.hashers import (
+    make_password,
+    check_password
+)
+from django.conf import settings
 
 
 import openpyxl
+import os
 
 from .models import (
     Usuario, TipoUsuario, Ejercicio, TipoEjercicio, Rutina,
@@ -358,23 +363,27 @@ def dashboard_view(request):
 
 
 
-# ─── EJERCICIOS (TODOS LOS ROLES) ─────────────────────────────────────
+# ─── Finalizar una rutina ─────────────────────────────────────
 
 @login_required_custom
-@rol_required('Admin','Coach','Usuario')
-def ejercicios_lista(request):
-    q = request.GET.get('q', '')
-    ejercicios = Ejercicio.objects.select_related('tipo_ejercicio')
+@rol_required('Coach', 'Admin')
+def coach_finalizar_asignacion(request, pk):
 
-    if q:
-        ejercicios = ejercicios.filter(nombre__icontains=q)
+    asignacion = get_object_or_404(
+        RutinaUsuario,
+        pk=pk
+    )
 
-    return render(request, 'core/ejercicios_lista.html', {
-        'ejercicios': ejercicios.order_by('nombre'),
-        'q': q,
-        'rol': request.session.get('rol'),
-        'notif_count': notif_count(request)
-    })
+    asignacion.estado = 'Finalizada'
+    asignacion.fecha_final = timezone.now().date()
+    asignacion.save()
+
+    messages.success(
+        request,
+        'La rutina fue desasignada correctamente.'
+    )
+
+    return redirect('coach_usuarios')
 
 # ─── ADMIN: Usuarios ──────────────────────────────────────────────────────────
 
@@ -457,6 +466,249 @@ def admin_eliminar_usuario(request, pk):
     return render(request, 'core/admin/confirmar_eliminar.html', {
         'objeto': user, 'tipo': 'usuario', 'notif_count': notif_count(request)
     })
+
+
+@login_required_custom
+@rol_required('Admin', 'Coach')
+def eliminar_rutina_ejercicio(request, pk):
+
+    relacion = get_object_or_404(
+        RutinaEjercicio,
+        pk=pk
+    )
+
+    rutina_id = relacion.id_rutina.id_rutina
+
+    if request.method == 'POST':
+
+        relacion.delete()
+
+        messages.success(
+            request,
+            'Ejercicio eliminado de la rutina.'
+        )
+
+        return redirect(
+            'ver_rutina',
+            rutina_id=rutina_id
+        )
+
+    return render(
+        request,
+        'core/coach/confirmar_eliminar_rutina_ejercicio.html',
+        {
+            'relacion': relacion,
+            'notif_count': notif_count(request)
+        }
+    )
+
+
+@login_required_custom
+@rol_required('Admin', 'Coach')
+def editar_rutina_ejercicio(request, pk):
+
+    relacion = get_object_or_404(
+        RutinaEjercicio,
+        pk=pk
+    )
+
+    if request.method == 'POST':
+
+        relacion.orden = request.POST.get('orden') or None
+        relacion.series = request.POST.get('series') or None
+        relacion.repeticiones = request.POST.get('repeticiones') or None
+        relacion.descanso = request.POST.get('descanso')
+
+        relacion.save()
+
+        messages.success(
+            request,
+            'Ejercicio actualizado.'
+        )
+
+        return redirect(
+            'ver_rutina',
+            rutina_id=relacion.id_rutina.id_rutina
+        )
+
+    return render(
+        request,
+        'core/coach/editar_rutina_ejercicio.html',
+        {
+            'relacion': relacion,
+            'notif_count': notif_count(request)
+        }
+    )
+
+
+@login_required_custom
+@rol_required('Admin', 'Coach')
+def editar_asignacion_rutina(request, pk):
+
+    asignacion = get_object_or_404(
+        RutinaUsuario,
+        pk=pk
+    )
+
+    if request.method == 'POST':
+
+        asignacion.fecha_inicio = (
+            request.POST.get('fecha_inicio') or None
+        )
+
+        asignacion.fecha_final = (
+            request.POST.get('fecha_final') or None
+        )
+
+        asignacion.adaptaciones_personalizadas = (
+            request.POST.get('adaptaciones', '')
+        )
+
+        asignacion.save()
+
+        dias_seleccionados = request.POST.getlist('dias')
+
+        print("DIAS RECIBIDOS:", dias_seleccionados)
+
+        # borrar días anteriores
+        RutinaUsuarioDia.objects.filter(
+            id_rutina_usuario=asignacion
+        ).delete()
+
+        # crear nuevos días
+        for dia in dias_seleccionados:
+
+            RutinaUsuarioDia.objects.create(
+                id_rutina_usuario=asignacion,
+                dia_semana=dia
+            )
+
+        print(
+            "DIAS GUARDADOS:",
+            list(
+                RutinaUsuarioDia.objects.filter(
+                    id_rutina_usuario=asignacion
+                ).values_list(
+                    'dia_semana',
+                    flat=True
+                )
+            )
+        )
+
+        messages.success(
+            request,
+            'Asignación actualizada correctamente.'
+        )
+
+        return redirect('coach_usuarios')
+
+    dias_actuales = list(
+        RutinaUsuarioDia.objects.filter(
+            id_rutina_usuario=asignacion
+        ).values_list(
+            'dia_semana',
+            flat=True
+        )
+    )
+
+    print("ASIGNACION:", asignacion.pk)
+    print("DIAS ACTUALES:", dias_actuales)
+
+    return render(
+        request,
+        'core/coach/editar_asignacion_rutina.html',
+        {
+            'asignacion': asignacion,
+            'dias_actuales': dias_actuales,
+            'notif_count': notif_count(request)
+        }
+    )
+
+
+
+
+
+
+
+
+@login_required_custom
+@rol_required('Admin', 'Coach')
+def editar_planificacion_rutina(request, rutina_id):
+
+    rutina = get_object_or_404(
+        Rutina,
+        pk=rutina_id
+    )
+
+    ejercicios = RutinaEjercicio.objects.filter(
+        id_rutina=rutina
+    ).select_related(
+        'id_ejercicio'
+    ).order_by(
+        'dia_semana',
+        'orden'
+    )
+
+    dias = {
+        'Lunes': [],
+        'Martes': [],
+        'Miércoles': [],
+        'Jueves': [],
+        'Viernes': [],
+        'Sábado': [],
+        'Domingo': []
+    }
+
+    for ejercicio in ejercicios:
+        dias[ejercicio.dia_semana].append(ejercicio)
+
+    return render(
+        request,
+        'core/coach/editar_planificacion_rutina.html',
+        {
+            'rutina': rutina,
+            'dias': dias,
+            'notif_count': notif_count(request)
+        }
+    )
+
+@login_required_custom
+@rol_required('Admin', 'Coach')
+def mover_ejercicio_dia(request, pk):
+
+    relacion = get_object_or_404(
+        RutinaEjercicio,
+        pk=pk
+    )
+
+    if request.method == 'POST':
+
+        nuevo_dia = request.POST.get('dia_semana')
+
+        dias_validos = [
+            'Lunes',
+            'Martes',
+            'Miércoles',
+            'Jueves',
+            'Viernes',
+            'Sábado',
+            'Domingo'
+        ]
+
+        if nuevo_dia in dias_validos:
+
+            relacion.dia_semana = nuevo_dia
+            relacion.save()
+
+            messages.success(
+                request,
+                'Ejercicio movido correctamente.'
+            )
+
+    return redirect(
+        'editar_planificacion_rutina',
+        rutina_id=relacion.id_rutina.id_rutina
+    )
 
 
 @rol_required('Admin')
@@ -572,6 +824,7 @@ def coach_editar_ejercicio(request, pk):
 
         except Exception as e:
             messages.error(request, f'Error: {e}')
+
 
     # ==============================
     # GET → CARGAR FORMULARIO
@@ -893,6 +1146,7 @@ def coach_crear_ejercicio(request):
 
 
 
+
 @rol_required('Admin','Coach')
 def coach_eliminar_ejercicio(request, pk):
     ej = get_object_or_404(Ejercicio, pk=pk)
@@ -973,9 +1227,14 @@ def usuario_rutina(request):
 
     # Orden real de la semana
     orden_semana = [
-    'Lunes','Martes','Miercoles','Jueves',
-    'Viernes','Sabado','Domingo'
-     ]
+    'Lunes',
+    'Martes',
+    'Miércoles',
+    'Jueves',
+    'Viernes',
+    'Sábado',
+    'Domingo'
+]
 
     semana = {dia: None for dia in orden_semana}
 
@@ -1216,27 +1475,68 @@ def usuario_explorar_rutinas(request):
 
 @rol_required('Usuario')
 def usuario_seleccionar_rutina(request, pk):
+
     rutina = get_object_or_404(Rutina, pk=pk)
     uid = request.session['usuario_id']
-    if request.method == 'POST':
-        ya_tiene = RutinaUsuario.objects.filter(
-            id_usuario_id=uid, id_rutina=rutina, estado='Activa'
-        ).exists()
-        if ya_tiene:
-            messages.warning(request, 'Ya tienes esta rutina activa.')
-        else:
-            RutinaUsuario.objects.create(
-                id_usuario=Usuario.objects.get(pk=uid),
-                id_rutina=rutina,
-                fecha_inicio=timezone.now().date(),
-                estado='Activa'
-            )
-            messages.success(request, f'¡Rutina "{rutina.nombre}" añadida a tu plan!')
-        return redirect('usuario_rutina')
-    return render(request, 'core/usuario/confirmar_rutina.html', {
-        'rutina': rutina, 'notif_count': notif_count(request)
-    })
 
+    if request.method == 'POST':
+
+        fecha_inicio = request.POST.get('fecha_inicio')
+        fecha_final = request.POST.get('fecha_final')
+        dias = request.POST.getlist('dias')
+
+        ya_tiene = RutinaUsuario.objects.filter(
+            id_usuario_id=uid,
+            id_rutina=rutina,
+            estado='Activa'
+        ).exists()
+
+        if ya_tiene:
+            messages.warning(
+                request,
+                'Ya tienes esta rutina activa.'
+            )
+            return redirect('usuario_rutina')
+
+        if not dias:
+            messages.error(
+                request,
+                'Debes seleccionar al menos un día.'
+            )
+            return redirect(
+                'usuario_seleccionar_rutina',
+                pk=rutina.id_rutina
+            )
+
+        rutina_usuario = RutinaUsuario.objects.create(
+            id_usuario=Usuario.objects.get(pk=uid),
+            id_rutina=rutina,
+            fecha_inicio=fecha_inicio or None,
+            fecha_final=fecha_final or None,
+            estado='Activa'
+        )
+
+        for dia in dias:
+            RutinaUsuarioDia.objects.create(
+                id_rutina_usuario=rutina_usuario,
+                dia_semana=dia
+            )
+
+        messages.success(
+            request,
+            f'Rutina "{rutina.nombre}" añadida correctamente.'
+        )
+
+        return redirect('usuario_rutina')
+
+    return render(
+        request,
+        'core/usuario/seleccionar_rutina.html',
+        {
+            'rutina': rutina,
+            'notif_count': notif_count(request)
+        }
+    )
 
 # ─── Notificaciones ───────────────────────────────────────────────────────────
 
@@ -1245,22 +1545,28 @@ def notificaciones_view(request):
 
     uid = request.session['usuario_id']
 
-    # ✅ Marcar todas como leídas
+    # Marcar todas como leídas
     Notificacion.objects.filter(
         id_usuario_id=uid,
         estado='No Leída'
-    ).update(estado='Leída')
+    ).update(
+        estado='Leída'
+    )
 
-    # Obtener notificaciones
-    notifs = Notificacion.objects.filter(
-        id_usuario_id=uid
-    ).order_by('-fecha_hora')
+    notifs = (
+        Notificacion.objects
+        .filter(id_usuario_id=uid)
+        .order_by('-fecha_hora')[:30]
+    )
 
-    return render(request, 'core/notificaciones.html', {
-        'notificaciones': notifs,
-        'notif_count': 0
-    })
-
+    return render(
+        request,
+        'core/notificaciones.html',
+        {
+            'notificaciones': notifs,
+            'notif_count': 0
+        }
+    )
 
 @login_required_custom
 def marcar_leida(request, pk):
@@ -1277,29 +1583,242 @@ def marcar_leida(request, pk):
     return redirect('notificaciones')
 
 
+@login_required_custom
+def marcar_todas_leidas(request):
+
+    Notificacion.objects.filter(
+        id_usuario_id=request.session['usuario_id'],
+        estado='No Leída'
+    ).update(estado='Leída')
+
+    return redirect('notificaciones')
+
 # ─── Perfil ───────────────────────────────────────────────────────────────────
 
 @login_required_custom
 def perfil_view(request):
-    user = get_object_or_404(Usuario, pk=request.session['usuario_id'])
-    if request.method == 'POST':
-        try:
-            user.nombre = request.POST.get('nombre', user.nombre)
-            user.apellido = request.POST.get('apellido', user.apellido)
-            user.email = request.POST.get('email', user.email)
-            user.objetivo = request.POST.get('objetivo', user.objetivo)
-            user.edad = request.POST.get('edad') or user.edad
-            if request.POST.get('contrasena'):
-                user.contrasena = make_password(request.POST['contrasena'])
-            user.save()
-            request.session['nombre'] = f"{user.nombre} {user.apellido}"
-            messages.success(request, 'Perfil actualizado.')
-        except Exception as e:
-            messages.error(request, f'Error: {e}')
-    return render(request, 'core/perfil.html', {
-        'user_obj': user, 'notif_count': notif_count(request)
-    })
+    user = get_object_or_404(
+        Usuario,
+        pk=request.session['usuario_id']
+    )
 
+    if request.method == 'POST':
+
+        try:
+
+            nombre = request.POST.get(
+                'nombre',
+                user.nombre
+            ).strip()
+
+            apellido = request.POST.get(
+                'apellido',
+                user.apellido
+            ).strip()
+
+            email = request.POST.get(
+                'email',
+                user.email
+            ).strip()
+
+            objetivo = request.POST.get(
+                'objetivo',
+                user.objetivo or ''
+            ).strip()
+
+            disciplina = request.POST.get(
+                'disciplina_preferida',
+                user.disciplina_preferida or ''
+            ).strip()
+
+            # VALIDACIONES
+
+            if len(nombre) < 2:
+
+                messages.error(
+                    request,
+                    'El nombre debe tener al menos 2 caracteres.'
+                )
+
+                return redirect('perfil')
+
+            if len(apellido) < 2:
+
+                messages.error(
+                    request,
+                    'El apellido debe tener al menos 2 caracteres.'
+                )
+
+                return redirect('perfil')
+
+            if len(objetivo) > 100:
+
+                messages.error(
+                    request,
+                    'El objetivo es demasiado largo.'
+                )
+
+                return redirect('perfil')
+
+            if Usuario.objects.filter(
+                email=email
+            ).exclude(
+                pk=user.pk
+            ).exists():
+
+                messages.error(
+                    request,
+                    'Ese correo ya está registrado.'
+                )
+
+                return redirect('perfil')
+
+            # ACTUALIZAR DATOS
+
+            user.nombre = nombre
+            user.apellido = apellido
+            user.email = email
+            user.objetivo = objetivo
+            user.disciplina_preferida = disciplina
+
+            # FOTO DE PERFIL
+
+            if request.FILES.get('foto_perfil'):
+
+                foto = request.FILES['foto_perfil']
+
+                extensiones_validas = [
+                    '.jpg',
+                    '.jpeg',
+                    '.png',
+                    '.webp'
+                ]
+
+                extension = os.path.splitext(
+                    foto.name
+                )[1].lower()
+
+                if extension not in extensiones_validas:
+
+                    messages.error(
+                        request,
+                        'Formato de imagen no permitido.'
+                    )
+
+                    return redirect('perfil')
+
+                if foto.size > 2 * 1024 * 1024:
+
+                    messages.error(
+                        request,
+                        'La imagen no puede superar 2 MB.'
+                    )
+
+                    return redirect('perfil')
+
+                carpeta = settings.MEDIA_ROOT / 'perfiles'
+
+                carpeta.mkdir(
+                    parents=True,
+                    exist_ok=True
+                )
+
+                nombre_archivo = (
+                    f"usuario_{user.id_usuario}"
+                    f"{extension}"
+                )
+
+                ruta_archivo = carpeta / nombre_archivo
+
+                with open(
+                    ruta_archivo,
+                    'wb+'
+                ) as destino:
+
+                    for chunk in foto.chunks():
+
+                        destino.write(chunk)
+
+                user.foto_perfil = (
+                    f"perfiles/{nombre_archivo}"
+                )
+
+            # CAMBIO DE CONTRASEÑA
+
+            password_actual = request.POST.get(
+                'contrasena_actual'
+            )
+
+            password_nueva = request.POST.get(
+                'contrasena'
+            )
+
+            password_confirmar = request.POST.get(
+                'contrasena2'
+            )
+
+            if password_nueva:
+
+                if not check_password(
+                    password_actual,
+                    user.contrasena
+                ):
+
+                    messages.error(
+                        request,
+                        'La contraseña actual es incorrecta.'
+                    )
+
+                    return redirect('perfil')
+
+                if password_nueva != password_confirmar:
+
+                    messages.error(
+                        request,
+                        'Las contraseñas nuevas no coinciden.'
+                    )
+
+                    return redirect('perfil')
+
+                if len(password_nueva) < 8:
+
+                    messages.error(
+                        request,
+                        'La nueva contraseña debe tener mínimo 8 caracteres.'
+                    )
+
+                    return redirect('perfil')
+
+                user.contrasena = make_password(
+                    password_nueva
+                )
+
+            user.save()
+
+            request.session['nombre'] = (
+                f"{user.nombre} {user.apellido}"
+            )
+
+            messages.success(
+                request,
+                'Perfil actualizado correctamente.'
+            )
+
+        except Exception as e:
+
+            messages.error(
+                request,
+                f'Error: {e}'
+            )
+
+    return render(
+        request,
+        'core/perfil.html',
+        {
+            'user_obj': user,
+            'notif_count': notif_count(request)
+        }
+    )
 
 # ─── ÍTEM 1: CARGA MASIVA ─────────────────────────────────────────────────────
 
@@ -1688,7 +2207,7 @@ def verificar_logros(usuario):
                     UsuarioLogro.objects.create(
                         id_usuario=usuario,
                         id_logro=logro,
-                        fecha_obtenido=timezone.now()
+                        fecha_obtenida=timezone.now()
                     )
 
                     # 🔔 Notificación logro

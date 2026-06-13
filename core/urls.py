@@ -10,7 +10,7 @@ urlpatterns = [
 
     # Dashboard
     path('dashboard/', views.dashboard_view, name='dashboard'),
-    path('ejercicios/', views.ejercicios_lista, name='ejercicios_lista'),
+
 
     # ── ADMIN ──────────────────────────────────────────────
     path('admin-panel/usuarios/', views.admin_usuarios, name='admin_usuarios'),
@@ -50,6 +50,12 @@ urlpatterns = [
     path('coach/tipos-ejercicio/<int:pk>/editar/', views.coach_editar_tipo_ejercicio, name='coach_editar_tipo_ejercicio'),
     path('coach/tipos-ejercicio/<int:pk>/eliminar/', views.coach_eliminar_tipo_ejercicio, name='coach_eliminar_tipo_ejercicio'),
 
+
+path(
+    'coach/asignacion/<int:pk>/finalizar/',
+    views.coach_finalizar_asignacion,
+    name='coach_finalizar_asignacion'
+),
     # ── USUARIO ────────────────────────────────────────────
     path('usuario/mi-rutina/', views.usuario_rutina, name='usuario_rutina'),
     path('usuario/progreso/', views.usuario_progreso, name='usuario_progreso'),
@@ -61,6 +67,12 @@ urlpatterns = [
     # Notificaciones (todos los roles)
     path('notificaciones/', views.notificaciones_view, name='notificaciones'),
     path('notificaciones/<int:pk>/leer/', views.marcar_leida, name='marcar_leida'),
+path(
+    'notificaciones/marcar-todas/',
+    views.marcar_todas_leidas,
+    name='marcar_todas_leidas'
+),
+
 
     # Perfil
     path('perfil/', views.perfil_view, name='perfil'),
@@ -79,5 +91,40 @@ urlpatterns = [
     path('usuario/completar-ejercicio/<int:pk>/', views.completar_ejercicio),
     path('usuario/finalizar-rutina/<int:pk>/<int:tiempo>/', views.finalizar_rutina),
     path('reportes/exportar/', views.exportar_reportes_excel, name='exportar_reportes'),
+
+
+    path(
+    'rutina-ejercicio/<int:pk>/editar/',
+    views.editar_rutina_ejercicio,
+    name='editar_rutina_ejercicio'
+),
+
+path(
+    'rutina-ejercicio/<int:pk>/eliminar/',
+    views.eliminar_rutina_ejercicio,
+    name='eliminar_rutina_ejercicio'
+),
+
+
+path(
+    'rutina/<int:rutina_id>/planificacion/',
+    views.editar_planificacion_rutina,
+    name='editar_planificacion_rutina'
+),
+
+
+path(
+    'rutina-ejercicio/<int:pk>/mover/',
+    views.mover_ejercicio_dia,
+    name='mover_ejercicio_dia'
+),
+
+path(
+    'coach/asignacion/<int:pk>/editar/',
+    views.editar_asignacion_rutina,
+    name='editar_asignacion_rutina'
+),
+
+
 
 ]

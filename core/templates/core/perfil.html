@@ -12,9 +12,46 @@
 
   <!-- Tarjeta de perfil -->
   <div class="card" style="text-align:center">
-    <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--cyan));display:flex;align-items:center;justify-content:center;margin:0 auto 16px;font-family:'Bebas Neue',sans-serif;font-size:2rem;color:#fff">
-      {{ user_obj.nombre|first|upper }}
-    </div>
+    {% if user_obj.foto_perfil %}
+
+<img
+    src="/media/{{ user_obj.foto_perfil }}"
+    alt="Foto de perfil"
+    style="
+        width:90px;
+        height:90px;
+        border-radius:50%;
+        object-fit:cover;
+        margin:0 auto 16px;
+        display:block;
+        border:3px solid var(--blue);
+        box-shadow:0 8px 20px rgba(0,0,0,.15);
+    "
+>
+
+{% else %}
+
+<div style="
+    width:90px;
+    height:90px;
+    border-radius:50%;
+    background:linear-gradient(
+        135deg,
+        var(--blue),
+        var(--cyan)
+    );
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    margin:0 auto 16px;
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2rem;
+    color:#fff;
+">
+    {{ user_obj.nombre|first|upper }}
+</div>
+
+{% endif %}
     <h3 style="font-size:1.2rem">{{ user_obj.nombre }} {{ user_obj.apellido }}</h3>
     <div style="color:var(--text2);font-size:13px;margin-top:4px">@{{ user_obj.usuario }}</div>
     <span class="role-badge {% if user_obj.id_tipo_usuario.rol == 'Admin' %}admin{% elif user_obj.id_tipo_usuario.rol == 'Coach' %}coach{% else %}usuario{% endif %}" style="margin-top:12px;display:inline-block">
@@ -48,7 +85,7 @@
     <div class="card-header">
       <span class="card-title">Editar Información</span>
     </div>
-    <form method="POST">
+    <form method="POST" enctype="multipart/form-data">
       {% csrf_token %}
       <div class="form-row cols-2">
         <div class="form-group">
@@ -64,38 +101,210 @@
         <label class="form-label">Correo Electrónico</label>
         <input type="email" name="email" class="form-control" value="{{ user_obj.email }}">
       </div>
+
+
+        <hr style="margin:24px 0">
+
+<h4 style="margin-bottom:16px">
+    Información de la Cuenta
+</h4>
+
+<div class="form-row cols-2">
+
+    <div class="form-group">
+
+        <label class="form-label">
+            Usuario
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            value="{{ user_obj.usuario }}"
+            disabled
+        >
+
+    </div>
+
+    <div class="form-group">
+
+        <label class="form-label">
+            Rol
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            value="{{ user_obj.id_tipo_usuario.rol }}"
+            disabled
+        >
+
+    </div>
+
+</div>
+
+<div class="form-group">
+
+    <label class="form-label">
+        Miembro desde
+    </label>
+
+    <input
+        type="text"
+        class="form-control"
+        value="{{ user_obj.fecha_registro }}"
+        disabled
+    >
+
+</div>
+
       <div class="form-row cols-2">
-        <div class="form-group">
-          <label class="form-label">Edad</label>
-          <input type="number" name="edad" class="form-control" value="{{ user_obj.edad|default:'' }}" min="1" max="120">
-        </div>
-        <div class="form-group">
-          <label class="form-label">Objetivo</label>
-          <input type="text" name="objetivo" class="form-control" value="{{ user_obj.objetivo|default:'' }}" placeholder="Ej: Perder peso, ganar músculo...">
-        </div>
-      </div>
+
+    <div class="form-group">
+
+        <label class="form-label">
+            Edad
+        </label>
+
+        <input
+            type="text"
+            class="form-control"
+            value="{% if user_obj.edad %}{{ user_obj.edad }} años{% else %}No registrada{% endif %}"
+            disabled
+        >
+
+    </div>
+
+    <div class="form-group">
+
+        <label class="form-label">
+            Objetivo
+        </label>
+
+        
+
+        <input
+            type="text"
+            name="objetivo"
+            class="form-control"
+            value="{{ user_obj.objetivo|default:'' }}"
+        >
+
+    </div>
+    <div class="form-group">
+
+    <label class="form-label">
+        Disciplina Preferida
+    </label>
+
+    <input
+        type="text"
+        name="disciplina_preferida"
+        class="form-control"
+        value="{{ user_obj.disciplina_preferida|default:'' }}"
+        placeholder="Ej: Calistenia, Running, Crossfit"
+    >
+
+</div>
+
+</div>
 
       <div style="border-top:1px solid var(--border);padding-top:20px;margin-top:4px">
-        <div class="card-header" style="margin-bottom:16px">
-          <span style="font-weight:600;font-size:14px">Cambiar Contraseña</span>
-          <span style="font-size:12px;color:var(--text3)">Dejar vacío para no cambiar</span>
-        </div>
-        <div class="form-row cols-2">
-          <div class="form-group">
-            <label class="form-label">Nueva Contraseña</label>
-            <input type="password" name="contrasena" class="form-control" placeholder="••••••••" minlength="6">
-          </div>
-          <div class="form-group">
-            <label class="form-label">Confirmar Contraseña</label>
-            <input type="password" name="contrasena2" class="form-control" placeholder="••••••••">
-          </div>
-        </div>
-      </div>
 
-      <button type="submit" class="btn btn-primary">
-        <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-        Guardar Cambios
-      </button>
+    <div class="card-header" style="margin-bottom:16px">
+
+        <span style="font-weight:600;font-size:14px">
+            Cambiar Contraseña
+        </span>
+
+        <span style="font-size:12px;color:var(--text3)">
+            Dejar vacío para no cambiar
+        </span>
+
+    </div>
+
+    <div class="form-row cols-3">
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Contraseña Actual
+            </label>
+
+            <input
+                type="password"
+                name="contrasena_actual"
+                class="form-control"
+                placeholder="••••••••"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Nueva Contraseña
+            </label>
+
+            <input
+                type="password"
+                name="contrasena"
+                class="form-control"
+                placeholder="••••••••"
+                minlength="8"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label class="form-label">
+                Confirmar Contraseña
+            </label>
+
+            <input
+                type="password"
+                name="contrasena2"
+                class="form-control"
+                placeholder="••••••••"
+            >
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="form-group">
+
+    <label class="form-label">
+        Foto de Perfil
+    </label>
+
+    <input
+        type="file"
+        name="foto_perfil"
+        class="form-control"
+        accept=".jpg,.jpeg,.png,.webp"
+    >
+
+    <small style="color:var(--text3)">
+        Formatos permitidos: JPG, PNG y WEBP. Máximo 2 MB.
+    </small>
+
+</div>
+
+<button type="submit" class="btn btn-primary">
+
+    <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/>
+        <polyline points="17 21 17 13 7 13 7 21"/>
+        <polyline points="7 3 7 8 15 8"/>
+    </svg>
+
+    Guardar Cambios
+
+</button>
     </form>
   </div>
 

@@ -15,6 +15,8 @@
       + Agregar Ejercicio
     </a>
 
+  
+
     <a href="javascript:history.back()" class="btn btn-outline">
       ← Volver
     </a>
@@ -59,12 +61,14 @@
 <td>
 <div style="display:flex;gap:6px">
 
-<a href="#" class="btn btn-outline btn-sm">
-Editar
+<a href="{% url 'editar_rutina_ejercicio' e.id_rutina_ejercicio %}"
+   class="btn btn-outline btn-sm">
+    Editar
 </a>
 
-<a href="#" class="btn btn-danger btn-sm">
-Eliminar
+<a href="{% url 'eliminar_rutina_ejercicio' e.id_rutina_ejercicio %}"
+   class="btn btn-danger btn-sm">
+    Eliminar
 </a>
 
 </div>

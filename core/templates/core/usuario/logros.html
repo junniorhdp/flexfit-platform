@@ -4,39 +4,416 @@
 {% block nav_logros %}active{% endblock %}
 
 {% block content %}
-<div class="page-header">
-  <div><h2>Logros</h2><p>Tu colección de achievements</p></div>
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:10px 20px;display:flex;align-items:center;gap:10px">
-    <span style="font-family:'Bebas Neue',sans-serif;font-size:1.5rem;color:var(--warning)">{{ mis_logros|length }}</span>
-    <span style="font-size:13px;color:var(--text2)">/ {{ todos_logros|length }} desbloqueados</span>
-  </div>
+
+<style>
+  .achievement-header{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:30px;
+
+}
+
+.section-badge{
+
+    color:#22c55e;
+
+    font-size:.8rem;
+
+    font-weight:700;
+
+    letter-spacing:2px;
+
+}
+
+.achievement-header h1{
+
+    margin:10px 0;
+
+    font-size:2.8rem;
+
+    font-weight:800;
+
+}
+
+.achievement-header p{
+
+    color:var(--text2);
+
+}
+
+.achievement-counter{
+
+    width:140px;
+    height:140px;
+
+    border-radius:28px;
+
+    display:flex;
+    flex-direction:column;
+
+    align-items:center;
+    justify-content:center;
+
+    color:white;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f59e0b,
+            #fbbf24
+        );
+
+    box-shadow:
+        0 20px 40px rgba(245,158,11,.25);
+
+}
+
+.counter-number{
+
+    font-size:2.5rem;
+    font-weight:800;
+
+}
+
+.counter-text{
+
+    font-size:.8rem;
+    opacity:.9;
+
+}
+
+.progress-card{
+
+    padding:24px;
+
+    border-radius:24px;
+
+    margin-bottom:30px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+}
+
+.progress-top{
+
+    display:flex;
+    justify-content:space-between;
+
+    margin-bottom:12px;
+
+}
+
+.progress-bar{
+
+    height:14px;
+
+    border-radius:999px;
+
+    overflow:hidden;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+.progress-fill{
+
+    height:100%;
+
+    border-radius:999px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #f59e0b,
+            #fbbf24
+        );
+
+}
+
+.achievement-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(320px,1fr));
+
+    gap:24px;
+
+}
+
+.achievement-card{
+
+    padding:24px;
+
+    border-radius:28px;
+
+    transition:.3s;
+
+    backdrop-filter:blur(12px);
+
+}
+
+.achievement-card:hover{
+
+    transform:translateY(-6px);
+
+}
+
+.achievement-card.unlocked{
+
+    background:
+        linear-gradient(
+            135deg,
+            rgba(245,158,11,.15),
+            rgba(251,191,36,.08)
+        );
+
+    border:
+        1px solid rgba(245,158,11,.3);
+
+}
+
+.achievement-card.locked{
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    opacity:.75;
+
+}
+
+.achievement-top{
+
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+
+    margin-bottom:20px;
+
+}
+
+.achievement-icon{
+
+    width:72px;
+    height:72px;
+
+    border-radius:20px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:2rem;
+
+    background:
+        rgba(255,255,255,.08);
+
+}
+
+.achievement-status{
+
+    padding:8px 12px;
+
+    border-radius:999px;
+
+    font-size:.7rem;
+
+    font-weight:700;
+
+}
+
+.unlocked-status{
+
+    background:
+        rgba(34,197,94,.15);
+
+    color:#22c55e;
+
+}
+
+.locked-status{
+
+    background:
+        rgba(107,114,128,.15);
+
+    color:#9ca3af;
+
+}
+
+.achievement-card h3{
+
+    margin-bottom:10px;
+
+    font-size:1.2rem;
+
+}
+
+.achievement-card p{
+
+    color:var(--text2);
+
+    line-height:1.6;
+
+}
+
+.achievement-requirement{
+
+    margin-top:18px;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    font-size:.8rem;
+
+    color:var(--text2);
+
+    background:
+        rgba(255,255,255,.04);
+
+}
+
+@media(max-width:768px){
+
+    .achievement-header{
+
+        flex-direction:column;
+        align-items:flex-start;
+        gap:20px;
+
+    }
+
+}
+</style>
+<div class="achievement-header">
+
+    <div>
+
+        <span class="section-badge">
+            SISTEMA DE LOGROS
+        </span>
+
+        <h1>🏆 Mis Logros</h1>
+
+        <p>
+            Desbloquea insignias completando rutinas,
+            entrenamientos y objetivos.
+        </p>
+
+    </div>
+
+    <div class="achievement-counter">
+
+        <div class="counter-number">
+            {{ mis_logros|length }}
+        </div>
+
+        <div class="counter-text">
+            de {{ todos_logros|length }} desbloqueados
+        </div>
+
+    </div>
+
+</div>
+
+<div class="progress-card">
+
+    <div class="progress-top">
+
+        <span>Progreso General</span>
+
+        <strong>
+            {% widthratio mis_logros|length todos_logros|length 100 %}%
+        </strong>
+
+    </div>
+
+    <div class="progress-bar">
+
+        <div
+            class="progress-fill"
+            style="width:{% widthratio mis_logros|length todos_logros|length 100 %}%"
+        ></div>
+
+    </div>
+
 </div>
 
 {% if todos_logros %}
+
 <div class="achievement-grid">
-  {% for logro in todos_logros %}
-  <div class="achievement-card {% if logro.id_logro in ids_obtenidos %}unlocked{% endif %}">
-    <div class="ach-icon">{% if logro.id_logro in ids_obtenidos %}🏆{% else %}🔒{% endif %}</div>
-    <h4>{{ logro.nombre }}</h4>
-    <p>{{ logro.descripcion|default:""|truncatechars:80 }}</p>
-    {% if logro.requisito %}
-    <div style="margin-top:10px;font-size:11px;color:var(--text3);background:var(--bg3);border-radius:6px;padding:6px 10px">
-      {{ logro.requisito }}
+
+    {% for logro in todos_logros %}
+
+    <div class="achievement-card {% if logro.id_logro in ids_obtenidos %}unlocked{% else %}locked{% endif %}">
+
+        <div class="achievement-top">
+
+            <div class="achievement-icon">
+
+                {% if logro.id_logro in ids_obtenidos %}
+                    🏆
+                {% else %}
+                    🔒
+                {% endif %}
+
+            </div>
+
+            {% if logro.id_logro in ids_obtenidos %}
+                <span class="achievement-status unlocked-status">
+                    DESBLOQUEADO
+                </span>
+            {% else %}
+                <span class="achievement-status locked-status">
+                    BLOQUEADO
+                </span>
+            {% endif %}
+
+        </div>
+
+        <h3>{{ logro.nombre }}</h3>
+
+        <p>
+            {{ logro.descripcion|default:""|truncatechars:100 }}
+        </p>
+
+        {% if logro.requisito %}
+        <div class="achievement-requirement">
+            {{ logro.requisito }}
+        </div>
+        {% endif %}
+
     </div>
-    {% endif %}
-    {% if logro.id_logro in ids_obtenidos %}
-    <div style="margin-top:10px">
-      <span class="badge badge-green">✓ Obtenido</span>
-    </div>
-    {% endif %}
-  </div>
-  {% endfor %}
+
+    {% endfor %}
+
 </div>
+
 {% else %}
+
 <div class="empty-state">
-  <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
+  <svg width="56" height="56" fill="none" stroke="currentColor" stroke-width="1.5" viewBox="0 0 24 24">
+      <circle cx="12" cy="8" r="6"/>
+      <path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/>
+  </svg>
+
   <h3>Sin logros disponibles</h3>
-  <p>Los logros se configuran desde el panel de administración.</p>
+
+  <p>
+      Los logros se configuran desde el panel de administración.
+  </p>
 </div>
+
 {% endif %}
 {% endblock %}

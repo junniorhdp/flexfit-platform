@@ -65,6 +65,12 @@ class Usuario(models.Model):
     )
     nivel_usuario = models.SmallIntegerField(null=True, blank=True)
 
+    foto_perfil = models.CharField(
+    max_length=255,
+    null=True,
+    blank=True
+    )
+
     class Meta:
         db_table = 'usuarios'
         managed = False

@@ -8,13 +8,183 @@
   <link rel="stylesheet" href="{% static 'core/css/main.css' %}">
 </head>
 <body>
+
+<style>
+  body{
+
+    min-height:100vh;
+
+    background:
+        radial-gradient(circle at top left,
+            rgba(30,107,255,.35),
+            transparent 40%
+        ),
+
+        radial-gradient(circle at bottom right,
+            rgba(34,197,94,.20),
+            transparent 35%
+        ),
+
+        #0f172a;
+
+}
+
+.hero-stats{
+
+    display:flex;
+    gap:16px;
+    margin-top:30px;
+
+}
+
+.stat{
+
+    flex:1;
+
+    padding:16px;
+
+    border-radius:18px;
+
+    background:rgba(255,255,255,.06);
+
+    backdrop-filter:blur(10px);
+
+    text-align:center;
+
+}
+
+.stat strong{
+
+    display:block;
+
+    font-size:1.4rem;
+
+    color:white;
+
+}
+
+.stat span{
+
+    color:rgba(255,255,255,.7);
+    font-size:.85rem;
+
+}
+
+.btn-primary{
+
+    height:54px;
+
+    font-size:1rem;
+
+    font-weight:700;
+
+    border:none;
+
+    border-radius:16px;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+
+    box-shadow:
+        0 15px 35px rgba(30,107,255,.35);
+
+    transition:.3s;
+}
+
+.btn-primary:hover{
+
+    transform:translateY(-3px);
+
+    box-shadow:
+        0 20px 45px rgba(30,107,255,.45);
+}
+
+.login-icon{
+    width:70px;
+    height:70px;
+    border-radius:18px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:2rem;
+
+    margin:0 auto 20px;
+
+    background:linear-gradient(
+        135deg,
+        #1e6bff,
+        #4f8dff
+    );
+
+    color:white;
+
+    box-shadow:
+        0 15px 35px rgba(30,107,255,.35);
+}
+
+.hero-title{
+    font-size:2.6rem;
+    font-weight:800;
+    line-height:1.1;
+    margin:18px 0;
+}
+
+.hero-text{
+    color:rgba(255,255,255,.75);
+    line-height:1.7;
+    max-width:500px;
+    margin-bottom:30px;
+}
+
+.brand-logo{
+    width:90px;
+    height:90px;
+    border-radius:24px;
+
+    display:flex;
+    align-items:center;
+    justify-content:center;
+
+    font-size:3rem;
+
+    background:rgba(255,255,255,.08);
+
+    backdrop-filter:blur(10px);
+
+    margin-bottom:24px;
+
+    border:1px solid rgba(255,255,255,.1);
+}
+
+</style>
+
 <div class="auth-page">
   <div class="auth-container">
 
     <!-- Lado izquierdo decorativo -->
     <div class="auth-left">
+      <div class="brand-logo">
+  💪
+</div>
       <div class="brand">FLEXFIT</div>
-      <div class="brand-sub">Tu plataforma de entrenamiento inteligente</div>
+
+<h1 class="hero-title">
+  Entrena con propósito.
+  <br>
+  Progresa con datos.
+</h1>
+
+<p class="hero-text">
+  Plataforma integral para coaches y deportistas.
+  Gestiona rutinas, seguimiento de progreso,
+  sesiones de entrenamiento y objetivos
+  desde un solo lugar.
+</p>
       <div class="features">
         <div class="auth-feature"><div class="dot"></div>Rutinas personalizadas por coaches expertos</div>
         <div class="auth-feature"><div class="dot"></div>Seguimiento de progreso en tiempo real</div>
@@ -42,9 +212,31 @@
 </div>
 
       <!-- TAB LOGIN -->
+       <div class="login-icon">
+  🔐
+</div>
 <div id="tab-login" class="tab-content active">
   <h2>Bienvenido</h2>
   <p class="sub">Ingresa tus credenciales para continuar</p>
+
+  <div class="hero-stats">
+
+    <div class="stat">
+        <strong>100+</strong>
+        <span>Ejercicios</span>
+    </div>
+
+    <div class="stat">
+        <strong>24/7</strong>
+        <span>Seguimiento</span>
+    </div>
+
+    <div class="stat">
+        <strong>∞</strong>
+        <span>Progreso</span>
+    </div>
+
+</div>
 
   <form method="POST" action="{% url 'login' %}">
     {% csrf_token %}
@@ -60,8 +252,10 @@
       <input type="password" name="contrasena" class="form-control" placeholder="••••••••" required>
     </div>
 
+    
+
     <button type="submit" class="btn btn-primary" style="width:100%;justify-content:center;margin-top:8px">
-      Ingresar
+      🚀 Ingresar a FlexFit
     </button>
   </form>
 </div>

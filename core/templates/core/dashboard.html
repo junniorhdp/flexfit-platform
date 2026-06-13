@@ -27,21 +27,21 @@
     <div class="stat-label">Usuarios Totales</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(0,212,255,.12);color:var(--cyan)">
+    <div class="stat-icon stat-icon-cyan">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16"/><circle cx="4" cy="6.5" r="1.5"/><circle cx="20" cy="6.5" r="1.5"/><circle cx="4" cy="17.5" r="1.5"/><circle cx="20" cy="17.5" r="1.5"/></svg>
     </div>
     <div class="stat-value">{{ total_ejercicios }}</div>
     <div class="stat-label">Ejercicios</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(0,229,155,.1);color:var(--success)">
+    <div class="stat-icon stat-icon-green">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
     </div>
     <div class="stat-value">{{ total_rutinas }}</div>
     <div class="stat-label">Rutinas</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(255,170,0,.1);color:var(--warning)">
+    <div class="stat-icon stat-icon-orange">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
     </div>
     <div class="stat-value">{{ total_coaches }}</div>
@@ -61,14 +61,22 @@
         {% for u in ultimos_usuarios %}
         <tr>
           <td><strong>{{ u.nombre }} {{ u.apellido }}</strong></td>
-          <td><span style="color:var(--text2)">@{{ u.usuario }}</span></td>
-          <td style="color:var(--text2)">{{ u.email }}</td>
+          <td>
+    <span class="table-muted">
+        @{{ u.usuario }}
+    </span>
+</td>
+          <td class="table-muted">
+            {{ u.email }}
+          </td>
           <td>
             <span class="badge {% if u.id_tipo_usuario.rol == 'Admin' %}badge-red{% elif u.id_tipo_usuario.rol == 'Coach' %}badge-blue{% else %}badge-green{% endif %}">
               {{ u.id_tipo_usuario.rol }}
             </span>
           </td>
-          <td style="color:var(--text2)">{{ u.fecha_registro }}</td>
+          <td class="table-muted">
+             {{ u.fecha_registro }}
+          </td>
           <td>
             <a href="{% url 'admin_editar_usuario' u.id_usuario %}" class="btn btn-outline btn-sm">Editar</a>
           </td>
@@ -101,14 +109,14 @@
     <div class="stat-label">Rutinas Disponibles</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(0,212,255,.12);color:var(--cyan)">
+    <div class="stat-icon stat-icon-cyan">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M6.5 6.5h11M6.5 17.5h11M4 12h16"/><circle cx="4" cy="6.5" r="1.5"/><circle cx="20" cy="6.5" r="1.5"/><circle cx="4" cy="17.5" r="1.5"/><circle cx="20" cy="17.5" r="1.5"/></svg>
     </div>
     <div class="stat-value">{{ total_ejercicios }}</div>
     <div class="stat-label">Ejercicios</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(0,229,155,.1);color:var(--success)">
+    <div class="stat-icon stat-icon-green">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
     </div>
     <div class="stat-value">{{ total_usuarios_asignados }}</div>
@@ -130,7 +138,9 @@
           <td><strong>{{ a.id_usuario.nombre }} {{ a.id_usuario.apellido }}</strong></td>
           <td>{{ a.id_rutina.nombre }}</td>
           <td><span class="badge badge-green">{{ a.estado }}</span></td>
-          <td style="color:var(--text2)">{{ a.fecha_inicio|default:"—" }}</td>
+          <td class="table-muted">
+             {{ a.fecha_inicio|default:"—" }}
+          </td>
         </tr>
         {% empty %}
         <tr><td colspan="4"><div class="empty-state"><p>No hay asignaciones activas.</p></div></td></tr>
@@ -142,6 +152,37 @@
 
 {% elif rol == 'Usuario' %}
 <!-- ══════════════════ USUARIO DASHBOARD ══════════════════ -->
+ <div class="dashboard-hero">
+
+    <div>
+
+        <span class="hero-badge">
+            👋 Bienvenido a FlexFit
+        </span>
+
+        <h1>
+            Hola, {{ request.session.nombre }}
+        </h1>
+
+        <p>
+            Sigue construyendo tu mejor versión hoy.
+        </p>
+
+    </div>
+
+    <div class="hero-avatar">
+
+        {% if usuario_actual and usuario_actual.foto_perfil %}
+            <img src="/media/{{ usuario_actual.foto_perfil }}">
+        {% else %}
+            <span>
+                {{ request.session.nombre|first|upper }}
+            </span>
+        {% endif %}
+
+    </div>
+
+</div>
 <div class="page-header">
   <div>
     <h2>Mi Dashboard</h2>
@@ -160,14 +201,14 @@
     <div class="stat-label">Rutinas Activas</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(0,212,255,.12);color:var(--cyan)">
+    <div class="stat-icon stat-icon-cyan">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
     </div>
-    <div class="stat-value">{{ total_sesiones }}</div>
-    <div class="stat-label">Sesiones Registradas</div>
+    <div class="stat-value">{{ notif_count }}</div>
+<div class="stat-label">Notificaciones Nuevas</div>
   </div>
   <div class="stat-card">
-    <div class="stat-icon" style="background:rgba(255,170,0,.1);color:var(--warning)">
+    <div class="stat-icon stat-icon-orange">
       <svg width="22" height="22" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><circle cx="12" cy="8" r="6"/><path d="M15.477 12.89L17 22l-5-3-5 3 1.523-9.11"/></svg>
     </div>
     <div class="stat-value">{{ mis_logros|length }}</div>
@@ -175,24 +216,26 @@
   </div>
 </div>
 
-<div style="display:grid;grid-template-columns:1fr 1fr;gap:24px;flex-wrap:wrap">
+<div class="user-content-grid">
   <div class="card">
     <div class="card-header">
       <span class="card-title">Mis Rutinas</span>
       <a href="{% url 'usuario_rutina' %}" class="btn btn-outline btn-sm">Ver todas</a>
     </div>
     {% for ru in mis_rutinas %}
-    <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
-      <div style="width:40px;height:40px;background:var(--blue-dim);border-radius:10px;display:flex;align-items:center;justify-content:center;color:var(--blue-light);flex-shrink:0">
+    <div class="user-routine-item">
+      <div class="user-routine-icon">
         <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
       </div>
       <div>
-        <div style="font-weight:600;font-size:14px">{{ ru.id_rutina.nombre }}</div>
-        <div style="font-size:12px;color:var(--text2)">{{ ru.id_rutina.disciplina|default:"Sin disciplina" }} · <span class="badge badge-green" style="font-size:10px">{{ ru.estado }}</span></div>
+       <div class="user-routine-title">{{ ru.id_rutina.nombre }}</div>
+        <div class="user-routine-meta">{{ ru.id_rutina.disciplina|default:"Sin disciplina" }} · <span class="badge badge-green badge-small">
+    {{ ru.estado }}
+</span></div>
       </div>
     </div>
     {% empty %}
-    <div class="empty-state" style="padding:30px 0">
+    <div class="empty-state empty-state-large">
       <p>Aún no tienes rutinas. <a href="{% url 'usuario_explorar_rutinas' %}">¡Explora y elige una!</a></p>
     </div>
     {% endfor %}
@@ -203,16 +246,18 @@
       <span class="card-title">Logros Recientes</span>
       <a href="{% url 'usuario_logros' %}" class="btn btn-outline btn-sm">Ver todos</a>
     </div>
-    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+    <div class="user-achievements-grid">
       {% for ul in mis_logros %}
-      <div style="background:var(--bg3);border-radius:10px;padding:14px;text-align:center;border:1px solid rgba(0,229,155,.2)">
-        <div style="font-size:1.8rem;margin-bottom:6px">🏆</div>
-        <div style="font-size:12px;font-weight:600">{{ ul.id_logro.nombre }}</div>
-        <div style="font-size:11px;color:var(--text3);margin-top:4px">{{ ul.fecha_obtenida|default:"—" }}</div>
+      <div class="user-achievement-card">
+      <div class="user-achievement-icon">🏆</div>
+       <div class="user-achievement-title">{{ ul.id_logro.nombre }}</div>
+      <div class="user-achievement-date">{{ ul.fecha_obtenida|default:"—" }}</div>
       </div>
       {% empty %}
-      <div style="grid-column:span 2" class="empty-state" style="padding:20px 0">
-        <p style="font-size:13px">Completa rutinas para desbloquear logros.</p>
+      <div class="empty-state empty-state-achievements">
+        <p class="achievement-empty-text">
+    Completa rutinas para desbloquear logros.
+</p>
       </div>
       {% endfor %}
     </div>
@@ -220,22 +265,25 @@
 </div>
 
 {% if notificaciones %}
-<div class="card" style="margin-top:24px">
+<div class="card notifications-card">
   <div class="card-header">
     <span class="card-title">Notificaciones Nuevas</span>
     <a href="{% url 'notificaciones' %}" class="btn btn-outline btn-sm">Ver todas</a>
   </div>
   {% for n in notificaciones %}
-  <div style="display:flex;align-items:flex-start;gap:12px;padding:12px 0;border-bottom:1px solid var(--border)">
-    <div style="width:8px;height:8px;background:var(--blue);border-radius:50%;margin-top:5px;flex-shrink:0"></div>
+  <div class="notification-item">
+    <div class="notification-dot"></div>
     <div>
-      <div style="font-size:14px">{{ n.mensaje }}</div>
-      <div style="font-size:11px;color:var(--text3);margin-top:3px">{{ n.fecha_hora }}</div>
+      <div class="notification-message">{{ n.mensaje }}</div>
+      <div class="notification-date">{{ n.fecha_hora }}</div>
     </div>
   </div>
   {% endfor %}
 </div>
 {% endif %}
+
+
 {% endif %}
+
 
 {% endblock %}

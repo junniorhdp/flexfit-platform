@@ -1,0 +1,42 @@
+{% extends 'core/base.html' %}
+
+{% block title %}Editar Ejercicio{% endblock %}
+{% block topbar_title %}Editar Ejercicio{% endblock %}
+
+{% block content %}
+
+<h2>{{ relacion.id_ejercicio.nombre }}</h2>
+
+<form method="post">
+    {% csrf_token %}
+
+
+    <br><br>
+
+    <label>Orden</label>
+    <input type="number" name="orden" value="{{ relacion.orden }}">
+
+    <br><br>
+
+    <label>Series</label>
+    <input type="number" name="series" value="{{ relacion.series }}">
+
+    <br><br>
+
+    <label>Repeticiones</label>
+    <input type="number" name="repeticiones" value="{{ relacion.repeticiones }}">
+
+    <br><br>
+
+    <label>Descanso</label>
+    <input type="text" name="descanso" value="{{ relacion.descanso }}">
+
+    <br><br>
+
+    <button type="submit">
+        Guardar cambios
+    </button>
+
+</form>
+
+{% endblock %}

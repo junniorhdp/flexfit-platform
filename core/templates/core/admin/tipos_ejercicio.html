@@ -12,25 +12,235 @@
   </a>
 </div>
 
-<div class="table-wrapper">
-  <table>
-    <thead><tr><th>#</th><th>Nombre</th><th>Acciones</th></tr></thead>
-    <tbody>
-      {% for t in tipos %}
-      <tr>
-        <td style="color:var(--text3)">{{ t.id_tipo }}</td>
-        <td><strong>{{ t.nombre }}</strong></td>
-        <td>
-          <div style="display:flex;gap:8px">
-            <a href="{% url 'admin_editar_tipo_ejercicio' t.id_tipo %}" class="btn btn-outline btn-sm">Editar</a>
-            <a href="{% url 'admin_eliminar_tipo_ejercicio' t.id_tipo %}" class="btn btn-danger btn-sm">Eliminar</a>
-          </div>
-        </td>
-      </tr>
-      {% empty %}
-      <tr><td colspan="3"><div class="empty-state"><h3>Sin tipos</h3><p>No hay tipos de ejercicio creados.</p></div></td></tr>
-      {% endfor %}
-    </tbody>
-  </table>
+<div class="tipos-grid">
+
+{% for t in tipos %}
+
+<div class="tipo-card">
+
+    <div class="tipo-icon">
+        🏋️
+    </div>
+
+    <div class="tipo-info">
+
+        <span class="tipo-id">
+            Tipo #{{ t.id_tipo }}
+        </span>
+
+        <h3>
+            {{ t.nombre }}
+        </h3>
+
+    </div>
+
+    <div class="tipo-actions">
+
+        <a href="{% url 'admin_editar_tipo_ejercicio' t.id_tipo %}"
+           class="btn-edit">
+            ✏ Editar
+        </a>
+
+        <a href="{% url 'admin_eliminar_tipo_ejercicio' t.id_tipo %}"
+           class="btn-delete">
+            🗑 Eliminar
+        </a>
+
+    </div>
+
 </div>
+
+{% empty %}
+
+<div class="empty-state-modern">
+
+    <div class="empty-icon">
+        📂
+    </div>
+
+    <h3>Sin tipos registrados</h3>
+
+    <p>
+        No existen categorías de ejercicios.
+    </p>
+
+</div>
+
+{% endfor %}
+
+</div>
+
+
+<style>
+
+.tipos-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(auto-fill,minmax(320px,1fr));
+
+    gap:22px;
+
+}
+
+.tipo-card{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:20px;
+
+    padding:24px;
+
+    border-radius:24px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.06);
+
+    transition:.3s;
+
+    backdrop-filter:blur(16px);
+
+}
+
+.tipo-card:hover{
+
+    transform:translateY(-6px);
+
+    border-color:
+        rgba(30,107,255,.25);
+
+    box-shadow:
+        0 20px 40px rgba(0,0,0,.2);
+
+}
+
+.tipo-icon{
+
+    width:70px;
+    height:70px;
+
+    border-radius:20px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    font-size:2rem;
+
+    background:
+        rgba(30,107,255,.12);
+
+}
+
+.tipo-id{
+
+    color:var(--text3);
+
+    font-size:.85rem;
+
+}
+
+.tipo-info h3{
+
+    margin-top:8px;
+
+    font-size:1.25rem;
+
+    font-weight:700;
+
+}
+
+.tipo-actions{
+
+    display:flex;
+
+    gap:10px;
+
+    margin-top:auto;
+
+}
+
+.btn-edit{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    color:white;
+
+    background:
+        rgba(255,255,255,.08);
+
+    font-weight:700;
+
+}
+
+.btn-delete{
+
+    flex:1;
+
+    text-align:center;
+
+    text-decoration:none;
+
+    padding:12px;
+
+    border-radius:14px;
+
+    color:#ef4444;
+
+    background:
+        rgba(239,68,68,.12);
+
+    font-weight:700;
+
+}
+
+.btn-edit:hover,
+.btn-delete:hover{
+
+    transform:translateY(-2px);
+
+}
+
+.empty-state-modern{
+
+    grid-column:1/-1;
+
+    text-align:center;
+
+    padding:80px 20px;
+
+    border-radius:24px;
+
+    background:
+        rgba(255,255,255,.03);
+
+    border:
+        1px solid rgba(255,255,255,.05);
+
+}
+
+.empty-icon{
+
+    font-size:4rem;
+
+    margin-bottom:15px;
+
+}
+
+</style>
 {% endblock %}
