@@ -143,3 +143,16 @@ SECURE_PROXY_SSL_HEADER = (
     'HTTP_X_FORWARDED_PROTO',
     'https'
 )
+
+# Ejecutar migraciones automáticamente al arrancar en Render
+import os
+import sys
+
+if 'RENDER' in os.environ:
+    from django.core.management import execute_from_command_line
+    print("🚀 Forzando la ejecución de migraciones en Render...")
+    try:
+        execute_from_command_line(['manage.py', 'migrate', '--no-input'])
+        print("✅ Migraciones completadas con éxito.")
+    except Exception as e:
+        print(f"❌ Error al ejecutar las migraciones en producción: {e}", file=sys.stderr)
