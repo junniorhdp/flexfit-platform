@@ -323,8 +323,9 @@ class RutinaUsuarioDia(models.Model):
 class SesionEntrenamiento(models.Model):
     id_sesion = models.AutoField(primary_key=True)
 
+    # Le agregamos comillas simples al nombre del modelo
     id_rutina_usuario = models.ForeignKey(
-        RutinaUsuario,
+        'RutinaUsuario', 
         on_delete=models.CASCADE
     )
 

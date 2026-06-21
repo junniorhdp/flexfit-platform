@@ -1,42 +1,71 @@
 {% extends 'core/base.html' %}
 
-{% block title %}Editar Ejercicio{% endblock %}
+{% block title %}Editar Ejercicio · FlexFit{% endblock %}
 {% block topbar_title %}Editar Ejercicio{% endblock %}
 
 {% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 30px; border-bottom: 2px solid #1e293b; padding-bottom: 15px;">
+    <div>
+        <h2 style="margin: 0; color: #ffffff; font-size: 26px; font-weight: 700; letter-spacing: -0.5px;">Editar Detalles del Ejercicio</h2>
+        <p style="margin: 6px 0 0 0; color: #94a3b8; font-size: 15px;">
+            Modificando parámetros para: <strong style="color: #38bdf8; font-weight: 600; text-shadow: 0 0 10px rgba(56, 189, 248, 0.2);">{{ relacion.id_ejercicio.nombre }}</strong>
+        </p>
+    </div>
+    
+    <a href="javascript:history.back()" 
+       style="padding: 10px 20px; border: 1.5px solid #334155; border-radius: 8px; text-decoration: none; font-size: 14px; font-weight: 600; color: #94a3b8; background: #1e293b; transition: all 0.2s; display: inline-flex; align-items: center; gap: 8px;">
+        ← Volver
+    </a>
+</div>
 
-<h2>{{ relacion.id_ejercicio.nombre }}</h2>
+<div class="card" style="background: #0f172a; padding: 35px; border-radius: 12px; box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3), 0 8px 10px -6px rgba(0, 0, 0, 0.3); max-width: 600px; margin: 0 auto; border: 1px solid #1e293b;">
+    
+    <form method="post" style="display: flex; flex-direction: column; gap: 24px;">
+        {% csrf_token %}
 
-<form method="post">
-    {% csrf_token %}
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+            
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label for="id_orden" style="font-weight: 600; color: #38bdf8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Orden en rutina</label>
+                <input type="number" id="id_orden" name="orden" value="{{ relacion.orden }}" min="1"
+                       style="padding: 12px 16px; border: 1.5px solid #334155; border-radius: 8px; font-size: 15px; width: 100%; color: #f8fafc; background-color: #1e293b; transition: all 0.2s;"
+                       placeholder="Ej. 1">
+            </div>
 
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label for="id_series" style="font-weight: 600; color: #38bdf8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Series (Sets)</label>
+                <input type="number" id="id_series" name="series" value="{{ relacion.series }}" min="1"
+                       style="padding: 12px 16px; border: 1.5px solid #334155; border-radius: 8px; font-size: 15px; width: 100%; color: #f8fafc; background-color: #1e293b;"
+                       placeholder="Ej. 4">
+            </div>
 
-    <br><br>
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label for="id_repeticiones" style="font-weight: 600; color: #38bdf8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Repeticiones</label>
+                <input type="number" id="id_repeticiones" name="repeticiones" value="{{ relacion.repeticiones }}" min="0"
+                       style="padding: 12px 16px; border: 1.5px solid #334155; border-radius: 8px; font-size: 15px; width: 100%; color: #f8fafc; background-color: #1e293b;"
+                       placeholder="Ej. 12">
+            </div>
 
-    <label>Orden</label>
-    <input type="number" name="orden" value="{{ relacion.orden }}">
+            <div style="display: flex; flex-direction: column; gap: 8px;">
+                <label for="id_descanso" style="font-weight: 600; color: #38bdf8; font-size: 13px; text-transform: uppercase; letter-spacing: 0.5px;">Descanso</label>
+                <input type="text" id="id_descanso" name="descanso" value="{{ relacion.descanso|default:'' }}"
+                       style="padding: 12px 16px; border: 1.5px solid #334155; border-radius: 8px; font-size: 15px; width: 100%; color: #f8fafc; background-color: #1e293b;"
+                       placeholder="Ej. 90 seg">
+            </div>
 
-    <br><br>
+        </div>
 
-    <label>Series</label>
-    <input type="number" name="series" value="{{ relacion.series }}">
+        <div style="display: flex; justify-content: flex-end; gap: 14px; margin-top: 10px; border-top: 1.5px solid #1e293b; padding-top: 24px;">
+            <a href="javascript:history.back()" 
+               style="padding: 12px 24px; border: 1.5px solid #334155; border-radius: 8px; text-decoration: none; font-size: 15px; font-weight: 600; color: #94a3b8; background: #1e293b; transition: all 0.2s; display: inline-flex; align-items: center; justify-content: center;">
+                Cancelar
+            </a>
+            <button type="submit" 
+                    style="padding: 12px 28px; border: none; border-radius: 8px; font-size: 15px; font-weight: 700; color: #ffffff; background: #0284c7; box-shadow: 0 4px 12px rgba(2, 132, 199, 0.4); cursor: pointer; transition: background 0.2s;">
+                Guardar Cambios
+            </button>
+        </div>
 
-    <br><br>
-
-    <label>Repeticiones</label>
-    <input type="number" name="repeticiones" value="{{ relacion.repeticiones }}">
-
-    <br><br>
-
-    <label>Descanso</label>
-    <input type="text" name="descanso" value="{{ relacion.descanso }}">
-
-    <br><br>
-
-    <button type="submit">
-        Guardar cambios
-    </button>
-
-</form>
-
+    </form>
+</div>
 {% endblock %}

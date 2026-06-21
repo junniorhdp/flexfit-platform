@@ -3,95 +3,70 @@
 {% block topbar_title %}Ver Rutina{% endblock %}
 
 {% block content %}
+<div class="page-header" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+    <div>
+        <h2 style="margin: 0;">{{ rutina.nombre }}</h2>
+        <p style="margin: 5px 0 0 0; color: gray;">{{ rutina.descripcion|default:"Sin descripción" }}</p>
+    </div>
 
-<div class="page-header">
-  <div>
-    <h2>{{ rutina.nombre }}</h2>
-    <p>{{ rutina.descripcion|default:"Sin descripción" }}</p>
-  </div>
-
-  <div style="display:flex;gap:10px">
-    <a href="{% url 'agregar_ejercicio_rutina' rutina.id_rutina %}" class="btn btn-primary">
-      + Agregar Ejercicio
-    </a>
-
-  
-
-    <a href="javascript:history.back()" class="btn btn-outline">
-      ← Volver
-    </a>
-  </div>
+    <div style="display: flex; gap: 10px;">
+        <a href="{% url 'agregar_ejercicio_rutina' rutina.id_rutina %}" class="btn btn-primary">
+            + Agregar Ejercicio
+        </a>
+        <a href="javascript:history.back()" class="btn btn-outline">
+            ← Volver
+        </a>
+    </div>
 </div>
-
 
 <div class="card">
-
-<table>
-<thead>
-<tr>
-<th>Orden</th>
-<th>Ejercicio</th>
-<th>Día</th>
-<th>Series</th>
-<th>Reps</th>
-<th>Descanso</th>
-<th>Acciones</th>
-</tr>
-</thead>
-
-<tbody>
-
-{% for e in ejercicios %}
-<tr>
-<td>{{ e.orden|default:"—" }}</td>
-
-<td>
-<strong>{{ e.id_ejercicio.nombre }}</strong>
-<br>
-<small style="color:gray">
-{{ e.id_ejercicio.nivel_dificultad }}
-</small>
-</td>
-
-<td>{{ e.dia_semana }}</td>
-<td>{{ e.series|default:"—" }}</td>
-<td>{{ e.repeticiones|default:"—" }}</td>
-<td>{{ e.descanso|default:"—" }}</td>
-
-<td>
-<div style="display:flex;gap:6px">
-
-<a href="{% url 'editar_rutina_ejercicio' e.id_rutina_ejercicio %}"
-   class="btn btn-outline btn-sm">
-    Editar
-</a>
-
-<a href="{% url 'eliminar_rutina_ejercicio' e.id_rutina_ejercicio %}"
-   class="btn btn-danger btn-sm">
-    Eliminar
-</a>
-
+    <table>
+        <thead>
+            <tr>
+                <th>Orden</th>
+                <th>Ejercicio</th>
+                <th>Series</th>
+                <th>Reps</th>
+                <th>Descanso</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for e in ejercicios %}
+                <tr>
+                    <td>{{ e.orden|default:"—" }}</td>
+                    <td>
+                        <strong>{{ e.id_ejercicio.nombre }}</strong>
+                        <br>
+                        <small style="color: gray;">
+                            {{ e.id_ejercicio.nivel_dificultad }}
+                        </small>
+                    </td>
+                    <td>{{ e.series|default:"—" }}</td>
+                    <td>{{ e.repeticiones|default:"—" }}</td>
+                    <td>{{ e.descanso|default:"—" }}</td>
+                    <td>
+                        <div style="display: flex; gap: 6px;">
+                            <a href="{% url 'editar_rutina_ejercicio' e.id_rutina_ejercicio %}" class="btn btn-outline btn-sm">
+                                Editar
+                            </a>
+                            <a href="{% url 'eliminar_rutina_ejercicio' e.id_rutina_ejercicio %}" class="btn btn-danger btn-sm">
+                                Eliminar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+            {% empty %}
+                <tr>
+                    <td colspan="6">
+                        <div class="empty-state" style="text-align: center; padding: 20px;">
+                            <h3>Sin ejercicios</h3>
+                            <p>Esta rutina aún no tiene ejercicios.</p>
+                        </div>
+                    </td>
+                </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
-</td>
-
-</tr>
-
-{% empty %}
-
-<tr>
-<td colspan="7">
-<div class="empty-state">
-<h3>Sin ejercicios</h3>
-<p>Esta rutina aún no tiene ejercicios.</p>
-</div>
-</td>
-</tr>
-
-{% endfor %}
-
-</tbody>
-</table>
-
-</div>
-
 {% endblock %}
