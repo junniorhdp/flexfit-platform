@@ -30,10 +30,9 @@
 <div class="avatar">
     {% if usuario_actual and usuario_actual.foto_perfil %}
         <img 
-            src="/media/{{ usuario_actual.foto_perfil }}" 
-            alt="Foto de perfil"
-            loading="lazy"
-        >
+    src="{{ usuario_actual.foto_perfil }}" 
+    alt="Foto de perfil"
+>
     {% else %}
         <span>{{ request.session.nombre|first|upper|default:"U" }}</span>
     {% endif %}
