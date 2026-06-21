@@ -30,6 +30,8 @@ INSTALLED_APPS = [
     'django.contrib.messages',
     'django.contrib.staticfiles',
     'core',
+    'cloudinary',
+    'cloudinary_storage',
 ]
 
 
@@ -186,3 +188,13 @@ if 'RENDER' in os.environ:
     
     # Usa cookies de sesión basadas en base de datos estándar
     SESSION_ENGINE = 'django.contrib.sessions.backends.db'
+
+    WHITENOISE_ALLOW_ALL_ORIGINS = True
+
+    CLOUDINARY_STORAGE = {
+    'CLOUD_NAME': os.environ.get('CLOUDINARY_NAME'),
+    'API_KEY': os.environ.get('CLOUDINARY_KEY'),
+    'API_SECRET': os.environ.get('CLOUDINARY_SECRET'),
+}
+
+DEFAULT_FILE_STORAGE = 'cloudinary_storage.storage.MediaCloudinaryStorage'
