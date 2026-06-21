@@ -1,3 +1,4 @@
+from django.conf import settings
 from .models import Usuario
 
 
@@ -7,24 +8,20 @@ def usuario_actual(request):
         'usuario_id'
     )
 
-    if not usuario_id:
+    usuario = None
 
-        return {
-            'usuario_actual': None
-        }
+    if usuario_id:
 
-    try:
+        try:
+            usuario = Usuario.objects.get(
+                pk=usuario_id
+            )
 
-        usuario = Usuario.objects.get(
-            pk=usuario_id
-        )
+        except Usuario.DoesNotExist:
+            usuario = None
 
-        return {
-            'usuario_actual': usuario
-        }
 
-    except Usuario.DoesNotExist:
-
-        return {
-            'usuario_actual': None
-        }
+    return {
+        'usuario_actual': usuario,
+        'MEDIA_URL': settings.MEDIA_URL
+    }

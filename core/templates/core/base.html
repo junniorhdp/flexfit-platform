@@ -30,7 +30,7 @@
 <div class="avatar">
     {% if usuario_actual and usuario_actual.foto_perfil %}
         <img 
-    src="{{ usuario_actual.foto_perfil }}" 
+    src="{{ MEDIA_URL }}{{ usuario_actual.foto_perfil }}" 
     alt="Foto de perfil"
 >
     {% else %}

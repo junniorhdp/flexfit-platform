@@ -1716,7 +1716,16 @@ def perfil_view(request):
 
                     return redirect('perfil')
 
-                carpeta = settings.MEDIA_ROOT / 'perfiles'
+                carpeta = os.path.join(
+                    settings.MEDIA_ROOT,
+                    'perfiles'
+                )
+                os.makedirs(
+                     carpeta,
+                     exist_ok=True
+                )
+
+
 
                 carpeta.mkdir(
                     parents=True,
@@ -1728,11 +1737,14 @@ def perfil_view(request):
                     f"{extension}"
                 )
 
-                ruta_archivo = carpeta / nombre_archivo
+                ruta_archivo = os.path.join(
+                 carpeta,
+                 nombre_archivo
+                )
 
                 with open(
                     ruta_archivo,
-                    'wb+'
+                    'wb'
                 ) as destino:
 
                     for chunk in foto.chunks():
@@ -1742,6 +1754,12 @@ def perfil_view(request):
                 user.foto_perfil = (
                     f"perfiles/{nombre_archivo}"
                 )
+
+                print("==========================")
+                print("ARCHIVO:", ruta_archivo)
+                print("EXISTE:", os.path.exists(ruta_archivo))
+                print("==========================")
+
 
             # CAMBIO DE CONTRASEÑA
 
