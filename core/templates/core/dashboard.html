@@ -172,16 +172,15 @@
 
     <div class="hero-avatar">
 
-        {% if usuario_actual and usuario_actual.foto_perfil %}
-            <img src="/media/{{ usuario_actual.foto_perfil }}">
-        {% else %}
-            <span>
-                {{ request.session.nombre|first|upper }}
-            </span>
-        {% endif %}
+    {% if usuario_actual and usuario_actual.foto_perfil %}
+        <img src="{{ MEDIA_URL }}{{ usuario_actual.foto_perfil }}">
+    {% else %}
+        <span>
+            {{ request.session.nombre|first|upper }}
+        </span>
+    {% endif %}
 
-    </div>
-
+</div>S
 </div>
 <div class="page-header">
   <div>

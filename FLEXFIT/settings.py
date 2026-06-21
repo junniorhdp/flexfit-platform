@@ -59,6 +59,7 @@ TEMPLATES = [
                 'django.contrib.auth.context_processors.auth',
                 'django.contrib.messages.context_processors.messages',
                 'core.context_processors.usuario_actual',
+                'django.template.context_processors.media',
             ],
         },
     },
@@ -145,7 +146,6 @@ SECURE_PROXY_SSL_HEADER = (
 )
 
 # Ejecutar migraciones y crear superusuario automáticamente en Render
-import os
 import sys
 
 if 'RENDER' in os.environ:
