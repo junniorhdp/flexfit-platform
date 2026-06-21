@@ -2310,6 +2310,8 @@ def media_view(request, path):
     file_path = os.path.join(settings.MEDIA_ROOT, path)
 
     if os.path.exists(file_path):
-        return FileResponse(open(file_path, 'rb'))
+        return FileResponse(
+            open(file_path, 'rb')
+        )
 
-    raise Http404()
+    raise Http404("Archivo no encontrado")
