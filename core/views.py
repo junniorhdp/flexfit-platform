@@ -1795,6 +1795,24 @@ def perfil_view(request):
 
             user.save()
 
+            import os
+
+            print("MEDIA ROOT:", settings.MEDIA_ROOT)
+            print("FOTO BD:", user.foto_perfil)
+
+            ruta_prueba = settings.MEDIA_ROOT / user.foto_perfil
+
+            print("RUTA FISICA:", ruta_prueba)
+            print("EXISTE:", os.path.exists(ruta_prueba))
+
+
+
+
+
+
+
+
+
             request.session['nombre'] = (
                 f"{user.nombre} {user.apellido}"
             )
