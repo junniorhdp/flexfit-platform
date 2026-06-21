@@ -9,3 +9,4 @@ dj-database-url>=2.1.0
 PyMySQL>=1.1.0
 cloudinary
 django-cloudinary-storage
+django-storages

@@ -173,7 +173,10 @@
     <div class="hero-avatar">
 
     {% if usuario_actual and usuario_actual.foto_perfil %}
-        <img src="{{ MEDIA_URL }}{{ usuario_actual.foto_perfil }}">
+        <img 
+src="/media/{{ usuario_actual.foto_perfil }}"
+alt="Foto de perfil"
+>
     {% else %}
         <span>
             {{ request.session.nombre|first|upper }}

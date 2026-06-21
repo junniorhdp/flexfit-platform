@@ -8,10 +8,9 @@ from django.conf.urls.static import static
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('core.urls')),
+
+    re_path(
+        r'^media/(?P<path>.*)$',
+        media_view
+    ),
 ]
-
-
-urlpatterns += static(
-    settings.MEDIA_URL,
-    document_root=settings.MEDIA_ROOT
-)
