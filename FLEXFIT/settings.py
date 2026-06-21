@@ -11,7 +11,9 @@ SECRET_KEY = os.environ.get('SECRET_KEY', 'django-insecure-m8pigmzm98k1&@*49g4_r
 # DEBUG debe ser False en producción
 DEBUG = 'RENDER' not in os.environ
 
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = [
+    'flexfit-platform.onrender.com',
+]
 
 # En Render, tu dominio será algo como flexfit.onrender.com
 RENDER_EXTERNAL_HOSTNAME = os.environ.get('RENDER_EXTERNAL_HOSTNAME')
@@ -132,3 +134,12 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 LOGIN_URL = '/login/'
 LOGIN_REDIRECT_URL = '/dashboard/'
+
+CSRF_TRUSTED_ORIGINS = [
+    "https://flexfit-platform.onrender.com",
+]
+
+SECURE_PROXY_SSL_HEADER = (
+    'HTTP_X_FORWARDED_PROTO',
+    'https'
+)

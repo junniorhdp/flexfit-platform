@@ -11,7 +11,6 @@ class TipoUsuario(models.Model):
 
     class Meta:
         db_table = 'tipo_usuario'
-        managed = False
 
     def __str__(self):
         return self.rol
@@ -23,7 +22,6 @@ class Medida(models.Model):
 
     class Meta:
         db_table = 'medidas'
-        managed = False
 
     def __str__(self):
         return self.nombre_med
@@ -35,7 +33,6 @@ class Nivel(models.Model):
 
     class Meta:
         db_table = 'niveles'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -73,7 +70,6 @@ class Usuario(models.Model):
 
     class Meta:
         db_table = 'usuarios'
-        managed = False
 
     def __str__(self):
         return f"{self.nombre} {self.apellido}"
@@ -88,7 +84,6 @@ class TipoEjercicio(models.Model):
 
     class Meta:
         db_table = 'tipo_ejercicio'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -111,7 +106,6 @@ class Ejercicio(models.Model):
 
     class Meta:
         db_table = 'ejercicio'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -131,7 +125,6 @@ class VideoEjercicio(models.Model):
 
     class Meta:
         db_table = 'video_ejercicio'
-        managed = False  # 🔥 IMPORTANTE en tu caso
 
     def __str__(self):
         return f"Video de {self.ejercicio.nombre}"
@@ -150,7 +143,6 @@ class Rutina(models.Model):
 
     class Meta:
         db_table = 'rutina'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -176,7 +168,6 @@ class RutinaEjercicio(models.Model):
 
     class Meta:
         db_table = 'rutina_ejercicio'
-        managed = False
 
 
 class RutinaUsuario(models.Model):
@@ -198,7 +189,6 @@ class RutinaUsuario(models.Model):
 
     class Meta:
         db_table = 'rutina_usuario'
-        managed = False
 
 
 
@@ -219,7 +209,6 @@ class Seguimiento(models.Model):
 
     class Meta:
         db_table = 'seguimiento'
-        managed = False
 
 
 class Logro(models.Model):
@@ -237,7 +226,6 @@ class Logro(models.Model):
 
     class Meta:
         db_table = 'logros'
-        managed = False
 
     def __str__(self):
         return self.nombre
@@ -255,7 +243,6 @@ class UsuarioLogro(models.Model):
 
     class Meta:
         db_table = 'usuario_logro'
-        managed = False
         unique_together = (('id_usuario', 'id_logro'),)
 
 
@@ -273,7 +260,6 @@ class Notificacion(models.Model):
 
     class Meta:
         db_table = 'notificacion'
-        managed = False
 
 
 class ValoracionProfesional(models.Model):
@@ -289,7 +275,7 @@ class ValoracionProfesional(models.Model):
 
     class Meta:
         db_table = 'valoracion_profesional'
-        managed = False
+
 
 
 # ======================================================
