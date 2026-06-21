@@ -144,15 +144,26 @@ SECURE_PROXY_SSL_HEADER = (
     'https'
 )
 
-# Ejecutar migraciones automáticamente al arrancar en Render
+# Ejecutar migraciones y crear superusuario automáticamente en Render
 import os
 import sys
 
 if 'RENDER' in os.environ:
     from django.core.management import execute_from_command_line
+    from django.contrib.auth import get_user_model
+    
     print("🚀 Forzando la ejecución de migraciones en Render...")
     try:
         execute_from_command_line(['manage.py', 'migrate', '--no-input'])
         print("✅ Migraciones completadas con éxito.")
+        
+        # Intentar crear el superusuario automáticamente
+        User = get_user_model()
+        # Cambia 'admin' y la contraseña por los que tú quieras usar para entrar
+        if not User.objects.filter(username='admin').exists():
+            print("👤 Creando superusuario administrador...")
+            User.objects.create_superuser('admin', 'tu_email@flexfit.com', 'AdminFlexFit2026*')
+            print("✅ Superusuario creado con éxito.")
+            
     except Exception as e:
-        print(f"❌ Error al ejecutar las migraciones en producción: {e}", file=sys.stderr)
+        print(f"❌ Error en el proceso de inicialización en producción: {e}", file=sys.stderr)
