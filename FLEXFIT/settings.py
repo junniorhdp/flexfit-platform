@@ -167,3 +167,22 @@ if 'RENDER' in os.environ:
             
     except Exception as e:
         print(f"❌ Error en el proceso de inicialización en producción: {e}", file=sys.stderr)
+
+
+
+        # ──────────────────────────────────────────────────────────────────────────────
+# CONFIGURACIÓN DE SESIONES Y COOKIES PARA PRODUCCIÓN (HTTPS)
+# ──────────────────────────────────────────────────────────────────────────────
+if 'RENDER' in os.environ:
+    # Asegura que las cookies de sesión viajen únicamente por HTTPS
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+    
+    # Evita que scripts de JS accedan a las cookies de sesión (Protección XSS)
+    SESSION_COOKIE_HTTPONLY = True
+    
+    # Obliga a Django a guardar la sesión en cada petición para que no expire rápido
+    SESSION_SAVE_EVERY_REQUEST = True
+    
+    # Usa cookies de sesión basadas en base de datos estándar
+    SESSION_ENGINE = 'django.contrib.sessions.backends.db'
