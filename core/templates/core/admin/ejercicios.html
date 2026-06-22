@@ -46,11 +46,7 @@
           {% else %}—{% endif %}
         </td>
         <td>
-          <div style="display:flex;gap:8px">
-            <a href="{% url 'youtube_ejercicio' e.id_ejercicio %}" class="btn btn-outline btn-sm" title="Ver videos YouTube">📹</a>
-            <a href="{% url 'admin_editar_ejercicio' e.id_ejercicio %}" class="btn btn-outline btn-sm">Editar</a>
-            <a href="{% url 'admin_eliminar_ejercicio' e.id_ejercicio %}" class="btn btn-danger btn-sm">Eliminar</a>
-          </div>
+          
         </td>
       </tr>
       {% empty %}
