@@ -736,8 +736,22 @@ from django.http import HttpResponse
 
 @rol_required('Admin')
 def admin_ejercicios(request):
+    q = request.GET.get('q', '')
 
-    return HttpResponse("ADMIN EJERCICIOS FUNCIONA")
+    ejercicios = Ejercicio.objects.select_related(
+        'tipo_ejercicio'
+    )
+
+    if q:
+        ejercicios = ejercicios.filter(
+            nombre__icontains=q
+        )
+
+    return render(request, 'core/admin/ejercicios.html', {
+        'ejercicios': ejercicios.order_by('nombre'),
+        'q': q,
+        'notif_count': notif_count(request)
+    })
 
 
 @rol_required('Admin')
