@@ -11,7 +11,9 @@ class Command(BaseCommand):
         email = input("Email: ")
         password = input("Contraseña: ")
 
-        tipo_admin = TipoUsuario.objects.get(id_tipo_usuario=1)
+        tipo_admin = TipoUsuario.objects.get(
+        rol="Admin"
+        )
 
         if Usuario.objects.filter(usuario=usuario).exists():
             self.stdout.write(self.style.ERROR("Ese usuario ya existe"))
