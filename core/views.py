@@ -731,36 +731,50 @@ def admin_cambiar_rol(request, pk):
 
 
 # ─── ADMIN: Ejercicios ────────────────────────────────────────────────────────
-import sys
+
 from django.http import HttpResponse
-from django.shortcuts import render
-from django.views.debug import ExceptionReporter  # 👈 Importante para el truco
+
+
 
 @rol_required('Admin')
+
 def admin_ejercicios(request):
+
     q = request.GET.get('q', '')
 
+
+
     ejercicios = Ejercicio.objects.select_related(
+
         'tipo_ejercicio'
+
     )
 
+
+
     if q:
+
         ejercicios = ejercicios.filter(
+
             nombre__icontains=q
+
         )
 
-    # 🛑 ENCAPSULAMOS EL RENDER PARA CORREGIR EL ERROR 500 OCURRIDO EN EL TEMPLATE
-    try:
-        return render(request, 'core/admin/ejercicios.html', {
-            'ejercicios': ejercicios.order_by('nombre'),
-            'q': q,
-            'notif_count': notif_count(request)
-        })
-    except Exception as e:
-        # Esto intercepta el fallo del HTML y te lo muestra detallado en el navegador
-        exc_type, exc_value, exc_traceback = sys.exc_info()
-        reporter = ExceptionReporter(request, exc_type, exc_value, exc_traceback)
-        return HttpResponse(reporter.get_traceback_html(), status=500)
+
+
+    return render(request, 'core/admin/ejercicios.html', {
+
+        'ejercicios': ejercicios.order_by('nombre'),
+
+        'q': q,
+
+        'notif_count': notif_count(request)
+
+    }) 
+
+
+
+
 
 @rol_required('Admin')
 def admin_crear_ejercicio(request):
