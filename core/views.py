@@ -349,6 +349,9 @@ def dashboard_view(request):
         ctx['rutinas_activas'] = RutinaUsuario.objects.filter(estado='Activa').select_related('id_usuario', 'id_rutina')[:5]
 
     elif rol == 'Usuario':
+        # 🌟 LA LÍNEA QUE FALTA: Traer el objeto del usuario logueado para su foto de perfil
+        ctx['usuario_actual'] = Usuario.objects.filter(id_usuario=uid).first()
+
         ctx['mis_rutinas'] = RutinaUsuario.objects.filter(
             id_usuario_id=uid, estado='Activa'
         ).select_related('id_rutina')[:3]
@@ -361,8 +364,6 @@ def dashboard_view(request):
         ).order_by('-fecha_hora')[:3]
 
     return render(request, 'core/dashboard.html', ctx)
-
-
 
 # ─── Finalizar una rutina ─────────────────────────────────────
 
