@@ -1021,7 +1021,15 @@ def coach_rutinas(request):
 
 @rol_required('Coach')
 def coach_crear_rutina(request):
+    # 🌟 TRUCO TEMPORAL: Si no hay niveles en la BD, los creamos automáticamente
+    if not Nivel.objects.exists():
+        Nivel.objects.create(nombre="Bajo")
+        Nivel.objects.create(nombre="Medio")
+        Nivel.objects.create(nombre="Alto")
+
+    # Ahora sí, los consultamos de forma segura
     niveles = Nivel.objects.all()
+    
     if request.method == 'POST':
         try:
             Rutina.objects.create(
@@ -1036,10 +1044,10 @@ def coach_crear_rutina(request):
             return redirect('coach_rutinas')
         except Exception as e:
             messages.error(request, f'Error: {e}')
+            
     return render(request, 'core/coach/rutina_form.html', {
         'niveles': niveles, 'accion': 'Crear', 'notif_count': notif_count(request)
     })
-
 
 @rol_required('Coach')
 def coach_editar_rutina(request, pk):
